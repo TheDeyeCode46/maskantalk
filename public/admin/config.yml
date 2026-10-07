@@ -1,0 +1,39 @@
+backend:
+  name: github
+  repo: TheDeyeCode46/maskantalk
+  branch: main
+  base_url: https://sveltia-cms-auth.YOUR-WORKER-NAME.workers.dev
+
+media_folder: public/uploads
+public_folder: /uploads
+
+locale: fa
+
+collections:
+  - name: articles
+    label: مقالات
+    label_singular: مقاله
+    folder: src/content/articles
+    create: true
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    preview_path: "articles/{{slug}}"
+    fields:
+      - { name: title, label: عنوان, widget: string }
+      - { name: description, label: توضیح کوتاه, widget: text }
+      - { name: publishDate, label: تاریخ انتشار, widget: datetime, date_format: "YYYY-MM-DD", time_format: false, format: "YYYY-MM-DD" }
+      - { name: cover, label: تصویر اصلی, widget: image, required: false, hint: "یک تصویر از سیستم‌تان آپلود کنید" }
+      - name: category
+        label: دسته‌بندی
+        widget: select
+        options: ["خبر", "تحلیل", "یادداشت", "ویدیو", "داده"]
+        default: "خبر"
+      - { name: tags, label: برچسب‌ها, widget: list, required: false, default: [] }
+      - name: aparatHash
+        label: کد ویدیو آپارات
+        widget: string
+        required: false
+        hint: "فقط کد ویدیو. مثلا اگر لینک شما aparat.com/v/abc123 است، فقط بنویسید abc123"
+      - { name: duration, label: مدت زمان, widget: string, required: false, hint: "مثلا 45:20" }
+      - { name: author, label: نویسنده, widget: string, default: "تحریریه مسکن‌تاک" }
+      - { name: featured, label: در هیرو نمایش داده شود؟, widget: boolean, default: false }
+      - { name: body, label: متن مقاله, widget: markdown }
