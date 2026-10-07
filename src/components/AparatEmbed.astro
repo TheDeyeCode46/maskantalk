@@ -1,36 +1,80 @@
 ---
+import { extractAparatHash } from '../lib/aparat';
+
 interface Props {
   hash: string;
   title?: string;
   aspect?: '16:9' | '9:16';
+  autoplay?: boolean;
+  mode?: 'iframe' | 'modal-trigger';
 }
-const { hash, title = 'ویدیو مسکن‌تاک', aspect = '16:9' } = Astro.props;
+const {
+  hash: rawHash,
+  title = 'ویدیو مسکن‌تاک',
+  aspect = '16:9',
+  autoplay = false,
+  mode = 'iframe',
+} = Astro.props;
+
+const hash = extractAparatHash(rawHash);
 const padding = aspect === '9:16' ? '177.78%' : '56.25%';
+const params = autoplay ? '?autoplay=1' : '';
+const embedUrl = hash
+  ? `https://www.aparat.com/video/video/embed/videohash/${hash}/vt/frame${params}`
+  : null;
 ---
-<div class="aparat-wrap" style={`--padding:${padding}`}>
-  <iframe
-    src={`https://www.aparat.com/video/video/embed/videohash/${hash}/vt/frame`}
-    title={title}
-    allowfullscreen
-    webkitallowfullscreen
-    mozallowfullscreen
-  ></iframe>
-</div>
+{embedUrl ? (
+  <div class={`aparat-wrap aspect-${aspect === '9:16' ? 'vertical' : 'horizontal'}`}>
+    <iframe
+      src={embedUrl}
+      title={title}
+      allow="autoplay; fullscreen; encrypted-media; picture-in-picture; clipboard-write"
+      allowfullscreen
+      webkitallowfullscreen
+      mozallowfullscreen
+      referrerpolicy="strict-origin-when-cross-origin"
+      scrolling="no"
+      frameborder="0"
+    ></iframe>
+  </div>
+) : (
+  <div class="aparat-error">
+    <p>کد ویدیو آپارات نامعتبر است.</p>
+    <a href={`https://www.aparat.com/v/${rawHash}`} target="_blank" rel="noopener">
+      تلاش برای باز کردن در آپارات ↗
+    </a>
+  </div>
+)}
 
 <style>
   .aparat-wrap {
     position: relative;
-    padding-bottom: var(--padding);
+    width: 100%;
     height: 0;
     overflow: hidden;
-    margin: 1.5rem 0;
     border-radius: 16px;
     background: #050508;
   }
+  .aparat-wrap.aspect-horizontal { padding-bottom: 56.25%; }
+  .aparat-wrap.aspect-vertical { padding-bottom: 177.78%; }
+
   .aparat-wrap iframe {
     position: absolute;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
+    inset: 0;
+    width: 100%;
+    height: 100%;
     border: 0;
+    display: block;
   }
+
+  .aparat-error {
+    padding: 2rem;
+    text-align: center;
+    background: #1a1a22;
+    border: 1px dashed rgba(255,255,255,.2);
+    border-radius: 16px;
+    color: #aaa;
+    font-size: .9rem;
+  }
+  .aparat-error a { color: #F5A623; text-decoration: underline; }
 </style>
