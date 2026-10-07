@@ -1,0 +1,193 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import AparatEmbed from '../../components/AparatEmbed.astro';
+
+export async function getStaticPaths() {
+  const articles = await getCollection('articles');
+  return articles.map(article => ({
+    params: { slug: article.id },
+    props: { article },
+  }));
+}
+
+const { article } = Astro.props;
+const { Content } = await article.render();
+
+const allArticles = await getCollection('articles');
+const related = allArticles
+  .filter(a =>
+    a.id !== article.id &&
+    a.data.tags.some(t => article.data.tags.includes(t))
+  )
+  .slice(0, 3);
+---
+<BaseLayout title={article.data.title} description={article.data.description}>
+  <article class="single">
+    <div class="single-head">
+      <span class="single-cat">{article.data.category}</span>
+      <h1>{article.data.title}</h1>
+      <p class="single-desc">{article.data.description}</p>
+      <div class="single-meta">
+        <span>{article.data.author}</span>
+        <span>·</span>
+        <span>{article.data.publishDate.toLocaleDateString('fa-IR')}</span>
+        {article.data.duration && <>
+          <span>·</span>
+          <span>{article.data.duration}</span>
+        </>}
+      </div>
+    </div>
+
+    {article.data.aparatHash && (
+      <AparatEmbed hash={article.data.aparatHash} title={article.data.title} />
+    )}
+
+    <div class="prose">
+      <Content />
+    </div>
+
+    {related.length > 0 && (
+      <section class="related">
+        <h3>مطالب مرتبط</h3>
+        <div class="related-grid">
+          {related.map(r => (
+            <a href={`/articles/${r.id}/`} class="related-card">
+              <span class="related-cat">{r.data.category}</span>
+              <h4>{r.data.title}</h4>
+              <p>{r.data.description}</p>
+            </a>
+          ))}
+        </div>
+      </section>
+    )}
+  </article>
+</BaseLayout>
+
+<style>
+  .single {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 3rem 1.25rem 5rem;
+  }
+  .single-head { margin-bottom: 2rem; }
+  .single-cat {
+    display: inline-block;
+    color: #F5A623;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 0.8rem;
+  }
+  .single-head h1 {
+    font-size: clamp(1.5rem, 4vw, 2.4rem);
+    font-weight: 900;
+    line-height: 1.35;
+    letter-spacing: -0.02em;
+    margin-bottom: 1rem;
+    color: #fff;
+  }
+  .single-desc {
+    font-size: 1rem;
+    line-height: 1.9;
+    color: #A8ACBE;
+    margin-bottom: 1rem;
+  }
+  .single-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #6E7288;
+    font-size: 0.82rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(255,255,255,0.07);
+  }
+  .prose {
+    font-size: 1rem;
+    line-height: 2;
+    color: rgba(255,255,255,0.9);
+  }
+  .prose :global(h2) {
+    font-size: 1.4rem;
+    font-weight: 800;
+    margin: 2.5rem 0 1rem;
+    color: #fff;
+  }
+  .prose :global(h3) {
+    font-size: 1.15rem;
+    font-weight: 700;
+    margin: 2rem 0 0.75rem;
+    color: #fff;
+  }
+  .prose :global(p) { margin-bottom: 1.25rem; }
+  .prose :global(ul), .prose :global(ol) {
+    padding-right: 1.5rem;
+    margin-bottom: 1.25rem;
+  }
+  .prose :global(li) { margin-bottom: 0.5rem; }
+  .prose :global(a) {
+    color: #F5A623;
+    text-decoration: underline;
+  }
+  .prose :global(blockquote) {
+    border-right: 3px solid #F5A623;
+    padding-right: 1rem;
+    margin: 1.5rem 0;
+    font-style: italic;
+    color: #A8ACBE;
+  }
+  .prose :global(img) {
+    border-radius: 12px;
+    margin: 1.5rem 0;
+  }
+
+  .related {
+    margin-top: 4rem;
+    padding-top: 2rem;
+    border-top: 1px solid rgba(255,255,255,0.07);
+  }
+  .related h3 {
+    font-size: 1.2rem;
+    font-weight: 800;
+    margin-bottom: 1.25rem;
+    color: #fff;
+  }
+  .related-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+  }
+  .related-card {
+    background: #16171F;
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 14px;
+    padding: 1rem;
+    transition: all 0.3s;
+    display: block;
+  }
+  .related-card:hover {
+    border-color: rgba(245,166,35,0.35);
+    transform: translateY(-3px);
+  }
+  .related-cat {
+    display: inline-block;
+    color: #F5A623;
+    font-size: 0.65rem;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    margin-bottom: 0.4rem;
+  }
+  .related-card h4 {
+    font-size: 0.92rem;
+    font-weight: 700;
+    line-height: 1.5;
+    color: #fff;
+    margin-bottom: 0.5rem;
+  }
+  .related-card p {
+    font-size: 0.78rem;
+    line-height: 1.6;
+    color: #A8ACBE;
+  }
+</style>

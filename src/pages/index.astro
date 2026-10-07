@@ -1,3 +1,16 @@
+---
+import { getCollection } from 'astro:content';
+import AparatEmbed from '../components/AparatEmbed.astro';
+
+const allArticles = await getCollection('articles');
+const sorted = allArticles.sort((a, b) =>
+  b.data.publishDate.valueOf() - a.data.publishDate.valueOf()
+);
+
+const featured = sorted.find(a => a.data.featured) ?? sorted[0];
+const newsHero = sorted[0];
+const newsList = sorted.slice(1, 6);
+---
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
@@ -8,14 +21,13 @@
 
 <title>مسکن‌تاک | Maskan Talk</title>
 <meta name="description" content="مسکن‌تاک یک برنامه ویدیویی تخصصی درباره بازار مسکن، خرید و فروش ملک، اجاره، ساخت‌وساز و سرمایه‌گذاری است.">
-<link rel="canonical" href="https://maskantalk.ir/">
+<link rel="canonical" href="https://maskantalk.pages.dev/">
 
 <meta property="og:type" content="website">
 <meta property="og:locale" content="fa_IR">
 <meta property="og:site_name" content="مسکن‌تاک">
 <meta property="og:title" content="مسکن‌تاک | گفتگوهای تخصصی بازار مسکن">
 <meta property="og:description" content="هر هفته یک گفتگوی بی‌پرده با کارشناسان مسکن، املاک و ساختمان.">
-<meta property="og:image" content="https://maskantalk.ir/og-cover.jpg">
 
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="مسکن‌تاک">
@@ -27,11 +39,9 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 
-<style>
+<style is:global>
 /* ============================================================
    مسکن‌تاک — BRAND SYSTEM
-   Palette: Amber · Indigo · Coral · White · Charcoal
-   Base: Dark Charcoal
 ============================================================ */
 :root{
   --brand:#F5A623;
@@ -647,6 +657,7 @@ ul{list-style:none}
   min-height:440px;cursor:pointer;
   border:1px solid var(--line-2);
   transition:.4s var(--ease);background:#050508;
+  display:block;
 }
 .news-hero::before{
   content:"";position:absolute;top:0;left:0;right:0;height:1px;z-index:3;
@@ -993,7 +1004,6 @@ ul{list-style:none}
     border-top:1px solid rgba(255,255,255,.08);
   }
 
-  /* ==== REELS — CENTERED SNAP ==== */
   .reels-panel{border-radius:20px;padding:1.25rem 0 .9rem}
   .reels-head{padding:0 1.1rem;margin-bottom:.5rem}
   .reels-head .section-title{font-size:1.12rem;gap:.45rem}
@@ -1001,7 +1011,6 @@ ul{list-style:none}
   .reel-arrows{display:none}
 
   .reels-track{
-    /* reel width + symmetric gutters so the active reel is always centered */
     --reel-w: min(252px, 70vw);
     --reel-gap: .7rem;
     --side-pad: calc((100% - var(--reel-w)) / 2);
@@ -1027,7 +1036,6 @@ ul{list-style:none}
     scroll-snap-stop:always;
     border-radius:20px;
   }
-  /* Dim non-centered reels so the "clickable one" is obvious */
   .reels-track .reel{
     opacity:.55;
     filter:saturate(.7);
@@ -1119,62 +1127,45 @@ ul{list-style:none}
   }
 }
 
-/* ============================================================
-   SMALL PHONES (≤420px)
-============================================================ */
 @media (max-width: 420px) {
   .container{padding-inline:1rem}
-
   .hero-title{font-size:1.16rem}
   .hero-desc{font-size:.8rem}
   .hero-cta{font-size:.72rem;padding:.6rem .4rem;gap:.3rem}
   .hero-cta svg{width:13px;height:13px}
-
   .section-title{font-size:1.18rem}
   .bento-title{font-size:.9rem}
   .bento-tag{font-size:.6rem}
   .bento-foot{font-size:.66rem}
-
   .news-card-thumb{width:70px;height:70px}
   .news-card-body h4{font-size:.8rem}
-
   .reels-track{--reel-w: min(240px, 72vw)}
-
   .footer-title{font-size:1.12rem}
   .footer-desc{font-size:.78rem}
   .footer-form input{max-width:290px}
   .footer-form button{min-width:140px;max-width:190px;padding:.62rem 1.35rem;font-size:.8rem}
 }
 
-/* ============================================================
-   EXTRA-SMALL (≤360px)
-============================================================ */
 @media (max-width: 360px) {
   .container{padding-inline:.85rem}
-
   .brand-text{font-size:1rem}
   .brand-mark{width:34px;height:34px;font-size:1rem}
   .header-contact-mobile{padding:.42rem .7rem;font-size:.68rem;gap:.35rem}
   .header-contact-mobile svg{width:12px;height:12px}
-
   .hero-title{font-size:1.08rem}
   .hero-desc{font-size:.76rem;-webkit-line-clamp:2}
   .hero-cta{font-size:.68rem;padding:.55rem .3rem;min-height:44px;gap:.25rem}
   .hero-cta svg{width:12px;height:12px}
-
   .section-title{font-size:1.1rem}
   .bento-title{font-size:.86rem}
   .bento-foot{font-size:.64rem}
-
   .news-hero-body h3{font-size:1.02rem}
   .news-card-thumb{width:64px;height:64px}
   .news-card-body h4{font-size:.76rem}
   .news-card{padding:.65rem;gap:.65rem;min-height:78px}
-
   .reels-track{--reel-w: min(220px, 76vw)}
   .reel-info h4{font-size:.78rem}
   .reel-info span{font-size:.64rem}
-
   .footer-title{font-size:1.05rem}
   .footer-form input{max-width:250px;font-size:.82rem;padding:.75rem .9rem}
   .footer-form button{min-width:130px;max-width:170px;font-size:.78rem;padding:.6rem 1.2rem}
@@ -1189,9 +1180,6 @@ ul{list-style:none}
 
 <body>
 
-<!-- ============================================================
-     HEADER
-============================================================ -->
 <header class="site-header">
   <div class="container header-inner">
     <a href="#top" class="brand" aria-label="مسکن‌تاک">
@@ -1233,15 +1221,12 @@ ul{list-style:none}
 
 <main id="top">
 
-<!-- ============================================================
-     HERO
-============================================================ -->
 <section class="hero">
   <div class="container">
     <div class="hero-card reveal">
 
       <div class="hero-visual">
-        <img src="https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=1400&q=80&auto=format&fit=crop" alt="آخرین قسمت مسکن‌تاک">
+        <img src={featured?.data.cover ?? "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=1400&q=80&auto=format&fit=crop"} alt={featured?.data.title ?? "آخرین قسمت مسکن‌تاک"}>
         <span class="hero-badge-top">
           <span class="dot" aria-hidden="true"></span>
           جدیدترین قسمت
@@ -1249,25 +1234,32 @@ ul{list-style:none}
         <button class="hero-play" aria-label="پخش ویدیو">
           <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
         </button>
-        <span class="hero-duration">۵۸:۱۲</span>
+        <span class="hero-duration">{featured?.data.duration ?? "۵۸:۱۲"}</span>
       </div>
 
       <div class="hero-content">
-        <span class="hero-meta">قسمت ۱۲ · فصل اول</span>
+        <span class="hero-meta">قسمت جدید · فصل اول</span>
         <h1 class="hero-title">
-          بررسی <span class="hero-highlight">حباب قیمت مسکن</span> در سال ۱۴۰۵؛ آیا زمان خرید فرا رسیده است؟
+          {featured?.data.title ?? "مسکن‌تاک — گفتگوهای تخصصی بازار مسکن"}
         </h1>
         <p class="hero-desc">
-          در این قسمت از مسکن‌تاک به بررسی سیاست‌های جدید وزارت راه و شهرسازی و تاثیر آن بر بازار مسکن پرداخته‌ایم. کارشناسان ما تحلیل دقیقی از وضعیت فعلی ارائه می‌دهند.
+          {featured?.data.description ?? "هر هفته یک گفتگوی بی‌پرده با کارشناسان مسکن، املاک و ساختمان."}
         </p>
         <div class="hero-actions">
-          <a href="#" class="hero-cta hero-cta-brand">
-            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.6 15.6V8.4l6.2 3.6-6.2 3.6z"/></svg>
-            <span>تماشا در یوتیوب</span>
-          </a>
-          <a href="#" class="hero-cta hero-cta-ghost">
-            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l7 4.5-7 4.5z"/></svg>
-            <span>تماشا در آپارات</span>
+          {featured ? (
+            <a href={`/articles/${featured.id}/`} class="hero-cta hero-cta-brand">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l7 4.5-7 4.5z"/></svg>
+              <span>مشاهده و خواندن</span>
+            </a>
+          ) : (
+            <a href="#" class="hero-cta hero-cta-brand">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l7 4.5-7 4.5z"/></svg>
+              <span>تماشا در آپارات</span>
+            </a>
+          )}
+          <a href="#articles" class="hero-cta hero-cta-ghost">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 19.5V6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v13.5"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>
+            <span>آخرین مطالب</span>
           </a>
         </div>
       </div>
@@ -1276,9 +1268,6 @@ ul{list-style:none}
   </div>
 </section>
 
-<!-- ============================================================
-     VIDEO ARCHIVE
-============================================================ -->
 <section class="section" id="episodes">
   <div class="container">
 
@@ -1394,9 +1383,6 @@ ul{list-style:none}
   </div>
 </section>
 
-<!-- ============================================================
-     REELS
-============================================================ -->
 <section class="section" id="reels" style="padding-top:0">
   <div class="container">
     <div class="reels-panel reveal">
@@ -1483,105 +1469,73 @@ ul{list-style:none}
   </div>
 </section>
 
-<!-- ============================================================
-     NEWS & ARTICLES
-============================================================ -->
 <section class="section" id="articles" style="padding-top:0">
   <div class="container">
 
     <div class="section-head reveal">
       <h2 class="section-title">اخبار و <span class="accent">مقالات</span></h2>
-      <a href="#" class="section-link">
+      <a href="/articles/" class="section-link">
         همه مطالب
         <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
       </a>
     </div>
 
-    <div class="news-grid">
+    {newsHero ? (
+      <div class="news-grid">
 
-      <article class="news-hero reveal">
-        <img src="https://images.unsplash.com/photo-1480074568708-e7b720bb3f09?w=1400&q=80&auto=format&fit=crop" alt="">
-        <div class="news-hero-body">
-          <span class="news-hero-badge">متن کامل برنامه</span>
-          <h3>تحلیل جامع حباب قیمت مسکن در پایتخت؛ آیا رکود در راه است؟</h3>
-          <div class="news-hero-meta">
-            <span>دکتر احمدی</span>
-            <span class="sep"></span>
-            <span>۱۲ مهر ۱۴۰۵</span>
-            <span class="sep"></span>
-            <span>۹ دقیقه مطالعه</span>
+        <a href={`/articles/${newsHero.id}/`} class="news-hero reveal">
+          <img src={newsHero.data.cover ?? "https://images.unsplash.com/photo-1480074568708-e7b720bb3f09?w=1400&q=80&auto=format&fit=crop"} alt={newsHero.data.title}>
+          <div class="news-hero-body">
+            <span class="news-hero-badge">{newsHero.data.category}</span>
+            <h3>{newsHero.data.title}</h3>
+            <div class="news-hero-meta">
+              <span>{newsHero.data.author}</span>
+              <span class="sep"></span>
+              <span>{newsHero.data.publishDate.toLocaleDateString('fa-IR')}</span>
+              {newsHero.data.duration && (
+                <>
+                  <span class="sep"></span>
+                  <span>{newsHero.data.duration}</span>
+                </>
+              )}
+            </div>
           </div>
+        </a>
+
+        <div class="news-stack reveal">
+          {newsList.length > 0 ? newsList.map((article, i) => (
+            <a href={`/articles/${article.id}/`} class="news-card">
+              <div class="news-card-thumb">
+                <img src={article.data.cover ?? "https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=300&q=80&auto=format&fit=crop"} alt={article.data.title}>
+              </div>
+              <div class="news-card-body">
+                <span class={`news-card-cat ${i % 3 === 0 ? 'cat-amber' : i % 3 === 1 ? 'cat-coral' : 'cat-light'}`}>
+                  {article.data.category}
+                </span>
+                <h4>{article.data.title}</h4>
+                <span class="news-card-date">{article.data.publishDate.toLocaleDateString('fa-IR')}</span>
+              </div>
+            </a>
+          )) : (
+            <div style="padding:2rem;text-align:center;color:var(--text-dim);background:var(--card);border:1px solid var(--line);border-radius:18px;">
+              <p style="font-size:.9rem;">هنوز مقاله‌ای منتشر نشده. از پنل مدیریت اولین مطلب را بنویسید.</p>
+            </div>
+          )}
         </div>
-      </article>
-
-      <div class="news-stack reveal">
-
-        <a href="#" class="news-card">
-          <div class="news-card-thumb">
-            <img src="https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=300&q=80&auto=format&fit=crop" alt="">
-          </div>
-          <div class="news-card-body">
-            <span class="news-card-cat cat-amber">یادداشت تخصصی</span>
-            <h4>تاثیر نوسانات ارزی بر هزینه ساخت‌وساز در تهران</h4>
-            <span class="news-card-date">۱۱ مهر ۱۴۰۵</span>
-          </div>
-        </a>
-
-        <a href="#" class="news-card">
-          <div class="news-card-thumb">
-            <img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=300&q=80&auto=format&fit=crop" alt="">
-          </div>
-          <div class="news-card-body">
-            <span class="news-card-cat cat-coral">اخبار فوری</span>
-            <h4>جزئیات و شرایط جدید ثبت‌نام در طرح نهضت ملی مسکن</h4>
-            <span class="news-card-date">۱۰ مهر ۱۴۰۵</span>
-          </div>
-        </a>
-
-        <a href="#" class="news-card">
-          <div class="news-card-thumb">
-            <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=300&q=80&auto=format&fit=crop" alt="">
-          </div>
-          <div class="news-card-body">
-            <span class="news-card-cat cat-light">تحلیل داده</span>
-            <h4>بررسی روند ۱۰ ساله رشد قیمت آپارتمان در کلان‌شهرها</h4>
-            <span class="news-card-date">۸ مهر ۱۴۰۵</span>
-          </div>
-        </a>
-
-        <a href="#" class="news-card">
-          <div class="news-card-thumb">
-            <img src="https://images.unsplash.com/photo-1582407947304-fd86f1288c16?w=300&q=80&auto=format&fit=crop" alt="">
-          </div>
-          <div class="news-card-body">
-            <span class="news-card-cat cat-amber">یادداشت تخصصی</span>
-            <h4>چرا بازار مسکن در پاییز امسال راکد شده است؟</h4>
-            <span class="news-card-date">۶ مهر ۱۴۰۵</span>
-          </div>
-        </a>
-
-        <a href="#" class="news-card">
-          <div class="news-card-thumb">
-            <img src="https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=300&q=80&auto=format&fit=crop" alt="">
-          </div>
-          <div class="news-card-body">
-            <span class="news-card-cat cat-coral">اخبار فوری</span>
-            <h4>تصویب نهایی طرح مالیات بر خانه‌های خالی در مجلس</h4>
-            <span class="news-card-date">۴ مهر ۱۴۰۵</span>
-          </div>
-        </a>
 
       </div>
+    ) : (
+      <div style="padding:3rem;text-align:center;color:var(--text-dim);background:var(--card);border:1px solid var(--line);border-radius:24px;">
+        <h3 style="font-size:1.2rem;margin-bottom:.5rem;color:#fff;">هنوز مقاله‌ای منتشر نشده</h3>
+        <p style="font-size:.9rem;">اولین مقاله را از پنل مدیریت اضافه کنید.</p>
+      </div>
+    )}
 
-    </div>
   </div>
 </section>
 
 </main>
 
-<!-- ============================================================
-     FOOTER
-============================================================ -->
 <footer class="site-footer" id="contact">
   <div class="container">
 
@@ -1649,9 +1603,6 @@ ul{list-style:none}
   </div>
 </footer>
 
-<!-- ============================================================
-     BOTTOM NAV
-============================================================ -->
 <nav class="bottom-nav" aria-label="ناوبری موبایل">
   <div class="bottom-inner">
 
@@ -1689,11 +1640,10 @@ ul{list-style:none}
   </div>
 </nav>
 
-<script>
+<script is:inline>
 (function(){
   'use strict';
 
-  /* Reels horizontal scroll — works with center snap */
   var track = document.getElementById('reelsTrack');
   var prevBtn = document.getElementById('reelPrev');
   var nextBtn = document.getElementById('reelNext');
@@ -1716,7 +1666,6 @@ ul{list-style:none}
     });
   }
 
-  /* Highlight the reel that's currently centered — mobile only */
   if (track && reels.length) {
     var rafId = null;
     var isMobile = function(){ return window.matchMedia('(max-width: 900px)').matches; };
@@ -1749,13 +1698,11 @@ ul{list-style:none}
     track.addEventListener('scroll', scheduleCenter, { passive: true });
     window.addEventListener('resize', scheduleCenter);
     window.addEventListener('orientationchange', scheduleCenter);
-    /* initial + after layout settles */
     updateCenter();
     setTimeout(updateCenter, 200);
     setTimeout(updateCenter, 600);
   }
 
-  /* Bottom nav scroll spy — clears all at #contact */
   var bnItems = document.querySelectorAll('.bn-item');
   var secs = ['top', 'episodes', 'reels', 'articles'];
   var contactEl = document.getElementById('contact');
@@ -1790,7 +1737,6 @@ ul{list-style:none}
   window.addEventListener('resize', updateBN);
   updateBN();
 
-  /* Newsletter */
   var form = document.getElementById('newsForm');
   if (form) {
     form.addEventListener('submit', function(e){
@@ -1805,7 +1751,6 @@ ul{list-style:none}
     });
   }
 
-  /* Reveal on scroll */
   if ('IntersectionObserver' in window) {
     var obs = new IntersectionObserver(function(entries){
       entries.forEach(function(en){
