@@ -1,5 +1,5 @@
 ---
-import { getCollection } from 'astro:content';
+import { getCollection, render } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import AparatEmbed from '../../components/AparatEmbed.astro';
 
@@ -12,7 +12,7 @@ export async function getStaticPaths() {
 }
 
 const { article } = Astro.props;
-const { Content } = await article.render();
+const { Content } = await render(article);
 
 const allArticles = await getCollection('articles');
 const related = allArticles
@@ -32,10 +32,12 @@ const related = allArticles
         <span>{article.data.author}</span>
         <span>·</span>
         <span>{article.data.publishDate.toLocaleDateString('fa-IR')}</span>
-        {article.data.duration && <>
-          <span>·</span>
-          <span>{article.data.duration}</span>
-        </>}
+        {article.data.duration && (
+          <>
+            <span>·</span>
+            <span>{article.data.duration}</span>
+          </>
+        )}
       </div>
     </div>
 
