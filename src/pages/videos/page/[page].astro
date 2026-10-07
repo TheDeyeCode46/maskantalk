@@ -1,0 +1,57 @@
+---
+import { getCollection } from 'astro:content';
+import ArchiveLayout from '../../../layouts/ArchiveLayout.astro';
+
+export async function getStaticPaths() {
+  const all = await getCollection('articles');
+  const videos = all
+    .filter(a => a.data.category === 'ویدیو')
+    .sort((a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf());
+
+  const pageSize = 12;
+  const totalPages = Math.ceil(videos.length / pageSize);
+  const paths = [];
+  for (let i = 1; i < totalPages; i++) {
+    paths.push({
+      params: { page: String(i + 1) },
+      props: { pageNum: i + 1 },
+    });
+  }
+  return paths;
+}
+
+const { pageNum } = Astro.props;
+const all = await getCollection('articles');
+const videos = all
+  .filter(a => a.data.category === 'ویدیو')
+  .sort((a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf());
+const pageSize = 12;
+const data = videos.slice((pageNum - 1) * pageSize, pageNum * pageSize);
+const lastPage = Math.max(1, Math.ceil(videos.length / pageSize));
+---
+<ArchiveLayout title={`قسمت‌های مسکن‌تاک — صفحه ${pageNum}`}>
+  <div class="archive-grid-3">
+    {data.map(v => (
+      <a href={`/articles/${v.id}/`} class="archive-card">
+        <div class="ac-thumb">{v.data.cover && <img src={v.data.cover} alt="" />}</div>
+        <div class="ac-body">
+          <span class="ac-cat">{v.data.tags[0] ?? 'برنامه'}</span>
+          <h3 class="ac-title">{v.data.title}</h3>
+          <p class="ac-desc">{v.data.description}</p>
+          <div class="ac-meta">
+            <span>{v.data.author}</span><span>·</span>
+            <span>{v.data.publishDate.toLocaleDateString('fa-IR')}</span>
+          </div>
+        </div>
+      </a>
+    ))}
+  </div>
+
+  <nav class="pagination">
+    <a href={pageNum === 2 ? '/videos/' : `/videos/page/${pageNum - 1}/`}>قبلی</a>
+    {Array.from({ length: lastPage }, (_, i) => i + 1).map(n => (
+      n === pageNum ? <span class="current">{n}</span> : <a href={n === 1 ? '/videos/' : `/videos/page/${n}/`}>{n}</a>
+    ))}
+    {pageNum < lastPage ? <a href={`/videos/page/${pageNum + 1}/`}>بعدی</a> : <span class="disabled">بعدی</span>}
+  </nav>
+</ArchiveLayout>

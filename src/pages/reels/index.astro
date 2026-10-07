@@ -2,31 +2,30 @@
 import { getCollection } from 'astro:content';
 import ArchiveLayout from '../../layouts/ArchiveLayout.astro';
 
-export async function getStaticPaths({ paginate }) {
-  const all = await getCollection('articles');
-  const reels = all
-    .filter(a => a.data.category === 'کوتاه')
-    .sort((a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf());
-  return paginate(reels, { pageSize: 16 });
-}
+const all = await getCollection('articles');
+const reels = all
+  .filter(a => a.data.category === 'کوتاه')
+  .sort((a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf());
 
-const { page } = Astro.props;
+const pageSize = 16;
+const data = reels.slice(0, pageSize);
+const lastPage = Math.max(1, Math.ceil(reels.length / pageSize));
 ---
 <ArchiveLayout
   title="برش‌های کوتاه"
   description="ویدیوهای کوتاه و ریلز مسکن‌تاک"
   intro="کلیپ‌های کوتاه، برش‌های برنامه و ریلزهای اینستاگرام و آپارات."
 >
-  {page.data.length === 0 ? (
+  {data.length === 0 ? (
     <div class="empty-state">هنوز کلیپ کوتاهی منتشر نشده.</div>
   ) : (
     <div class="reels-grid">
-      {page.data.map(r => (
+      {data.map(r => (
         <a href={`/articles/${r.id}/`} class="reel-archive-card">
           {r.data.cover && <img src={r.data.cover} alt="" />}
           <div class="body">
             <h4>{r.data.title}</h4>
-            <span>{r.data.duration ?? ''} {r.data.duration ? '·' : ''} {r.data.publishDate.toLocaleDateString('fa-IR')}</span>
+            <span>{r.data.duration ?? ''}</span>
           </div>
         </a>
       ))}
@@ -34,10 +33,10 @@ const { page } = Astro.props;
   )}
 
   <nav class="pagination">
-    {page.url.prev ? <a href={page.url.prev}>قبلی</a> : <span class="disabled">قبلی</span>}
-    {Array.from({ length: page.lastPage }, (_, i) => i + 1).map(n => (
-      n === page.currentPage ? <span class="current">{n}</span> : <a href={n === 1 ? '/reels/' : `/reels/${n}/`}>{n}</a>
+    <span class="disabled">قبلی</span>
+    {Array.from({ length: lastPage }, (_, i) => i + 1).map(n => (
+      n === 1 ? <span class="current">1</span> : <a href={`/reels/page/${n}/`}>{n}</a>
     ))}
-    {page.url.next ? <a href={page.url.next}>بعدی</a> : <span class="disabled">بعدی</span>}
+    {lastPage > 1 ? <a href="/reels/page/2/">بعدی</a> : <span class="disabled">بعدی</span>}
   </nav>
 </ArchiveLayout>

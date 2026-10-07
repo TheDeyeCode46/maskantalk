@@ -2,37 +2,33 @@
 import { getCollection } from 'astro:content';
 import ArchiveLayout from '../../layouts/ArchiveLayout.astro';
 
-export async function getStaticPaths({ paginate }) {
-  const all = await getCollection('articles');
-  const videos = all
-    .filter(a => a.data.category === 'ویدیو')
-    .sort((a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf());
-  return paginate(videos, { pageSize: 12 });
-}
+const all = await getCollection('articles');
+const videos = all
+  .filter(a => a.data.category === 'ویدیو')
+  .sort((a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf());
 
-const { page } = Astro.props;
+const pageSize = 12;
+const data = videos.slice(0, pageSize);
+const lastPage = Math.max(1, Math.ceil(videos.length / pageSize));
 ---
 <ArchiveLayout
   title="قسمت‌های مسکن‌تاک"
   description="آرشیو کامل قسمت‌های برنامه مسکن‌تاک"
   intro="همه قسمت‌های برنامه ویدیویی مسکن‌تاک، مرتب‌شده از جدید به قدیم."
 >
-  {page.data.length === 0 ? (
+  {data.length === 0 ? (
     <div class="empty-state">هنوز ویدیویی منتشر نشده.</div>
   ) : (
     <div class="archive-grid-3">
-      {page.data.map(v => (
+      {data.map(v => (
         <a href={`/articles/${v.id}/`} class="archive-card">
-          <div class="ac-thumb">
-            {v.data.cover && <img src={v.data.cover} alt="" />}
-          </div>
+          <div class="ac-thumb">{v.data.cover && <img src={v.data.cover} alt="" />}</div>
           <div class="ac-body">
             <span class="ac-cat">{v.data.tags[0] ?? 'برنامه'}</span>
             <h3 class="ac-title">{v.data.title}</h3>
             <p class="ac-desc">{v.data.description}</p>
             <div class="ac-meta">
-              <span>{v.data.author}</span>
-              <span>·</span>
+              <span>{v.data.author}</span><span>·</span>
               <span>{v.data.publishDate.toLocaleDateString('fa-IR')}</span>
               {v.data.duration && <><span>·</span><span>{v.data.duration}</span></>}
             </div>
@@ -43,24 +39,10 @@ const { page } = Astro.props;
   )}
 
   <nav class="pagination">
-    {page.url.prev ? (
-      <a href={page.url.prev}>قبلی</a>
-    ) : (
-      <span class="disabled">قبلی</span>
-    )}
-
-    {Array.from({ length: page.lastPage }, (_, i) => i + 1).map(n => (
-      n === page.currentPage ? (
-        <span class="current">{n}</span>
-      ) : (
-        <a href={n === 1 ? '/videos/' : `/videos/${n}/`}>{n}</a>
-      )
+    <span class="disabled">قبلی</span>
+    {Array.from({ length: lastPage }, (_, i) => i + 1).map(n => (
+      n === 1 ? <span class="current">1</span> : <a href={`/videos/page/${n}/`}>{n}</a>
     ))}
-
-    {page.url.next ? (
-      <a href={page.url.next}>بعدی</a>
-    ) : (
-      <span class="disabled">بعدی</span>
-    )}
+    {lastPage > 1 ? <a href="/videos/page/2/">بعدی</a> : <span class="disabled">بعدی</span>}
   </nav>
 </ArchiveLayout>
