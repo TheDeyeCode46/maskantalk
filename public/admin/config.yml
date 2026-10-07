@@ -2,7 +2,7 @@ backend:
   name: github
   repo: TheDeyeCode46/maskantalk
   branch: main
-  base_url: https://sveltia-cms-auth.YOUR-WORKER-NAME.workers.dev
+  base_url: https://sveltia-cms-auth.a-dowlatabadi-peptalk.workers.dev
 
 media_folder: public/uploads
 public_folder: /uploads
