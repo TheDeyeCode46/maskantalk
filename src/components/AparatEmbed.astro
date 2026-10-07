@@ -2,10 +2,12 @@
 interface Props {
   hash: string;
   title?: string;
+  aspect?: '16:9' | '9:16';
 }
-const { hash, title = 'ویدیو مسکن‌تاک' } = Astro.props;
+const { hash, title = 'ویدیو مسکن‌تاک', aspect = '16:9' } = Astro.props;
+const padding = aspect === '9:16' ? '177.78%' : '56.25%';
 ---
-<div class="aparat-wrap">
+<div class="aparat-wrap" style={`--padding:${padding}`}>
   <iframe
     src={`https://www.aparat.com/video/video/embed/videohash/${hash}/vt/frame`}
     title={title}
@@ -18,10 +20,10 @@ const { hash, title = 'ویدیو مسکن‌تاک' } = Astro.props;
 <style>
   .aparat-wrap {
     position: relative;
-    padding-bottom: 56.25%;
+    padding-bottom: var(--padding);
     height: 0;
     overflow: hidden;
-    margin: 2rem 0;
+    margin: 1.5rem 0;
     border-radius: 16px;
     background: #050508;
   }

@@ -2,34 +2,46 @@
 import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 
-const allArticles = await getCollection('articles');
-const sorted = allArticles.sort((a, b) =>
+const all = await getCollection('articles');
+const sorted = all.sort((a, b) =>
   b.data.publishDate.valueOf() - a.data.publishDate.valueOf()
 );
 
+const VIDEO_CATS = ['ویدیو', 'کوتاه'];
+
+const videos = sorted.filter(a => a.data.category === 'ویدیو');
+const reels = sorted.filter(a => a.data.category === 'کوتاه');
+const articles = sorted.filter(a => !VIDEO_CATS.includes(a.data.category));
+
 const featured = sorted.find(a => a.data.featured) ?? sorted[0];
-const newsHero = sorted[0];
-const newsList = sorted.slice(1, 6);
+const heroIsVideo = featured && VIDEO_CATS.includes(featured.data.category);
+
+const newsHero = articles[0];
+const newsList = articles.slice(1, 6);
 ---
 <BaseLayout title="صفحه اصلی">
+  <!-- HERO -->
   <section class="hero">
     <div class="container">
       <div class="hero-card reveal">
-
         <div class="hero-visual">
-          <img src={featured?.data.cover ?? "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=1400&q=80&auto=format&fit=crop"} alt={featured?.data.title ?? "آخرین قسمت مسکن‌تاک"}>
+          <img src={featured?.data.cover ?? "/images/hero.jpg"} alt={featured?.data.title ?? "مسکن‌تاک"}>
           <span class="hero-badge-top">
             <span class="dot" aria-hidden="true"></span>
-            جدیدترین قسمت
+            جدیدترین
           </span>
-          <button class="hero-play" aria-label="پخش ویدیو">
-            <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-          </button>
-          <span class="hero-duration">{featured?.data.duration ?? "۵۸:۱۲"}</span>
+          {heroIsVideo ? (
+            <a href={`/articles/${featured.id}/`} class="hero-play" aria-label="پخش ویدیو">
+              <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+            </a>
+          ) : (
+            <a href={`/articles/${featured.id}/`} class="hero-link-overlay" aria-label="مشاهده"></a>
+          )}
+          {featured?.data.duration && <span class="hero-duration">{featured.data.duration}</span>}
         </div>
 
         <div class="hero-content">
-          <span class="hero-meta">قسمت جدید · فصل اول</span>
+          <span class="hero-meta">{featured?.data.category ?? 'مسکن‌تاک'}</span>
           <h1 class="hero-title">
             {featured?.data.title ?? "مسکن‌تاک — گفتگوهای تخصصی بازار مسکن"}
           </h1>
@@ -37,138 +49,59 @@ const newsList = sorted.slice(1, 6);
             {featured?.data.description ?? "هر هفته یک گفتگوی بی‌پرده با کارشناسان مسکن، املاک و ساختمان."}
           </p>
           <div class="hero-actions">
-            {featured ? (
-              <a href={`/articles/${featured.id}/`} class="hero-cta hero-cta-brand">
-                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l7 4.5-7 4.5z"/></svg>
-                <span>مشاهده و خواندن</span>
-              </a>
-            ) : (
-              <a href="#" class="hero-cta hero-cta-brand">
-                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l7 4.5-7 4.5z"/></svg>
-                <span>تماشا در آپارات</span>
-              </a>
-            )}
+            <a href={featured ? `/articles/${featured.id}/` : '#'} class="hero-cta hero-cta-brand">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l7 4.5-7 4.5z"/></svg>
+              <span>{heroIsVideo ? 'تماشا' : 'خواندن'}</span>
+            </a>
             <a href="#articles" class="hero-cta hero-cta-ghost">
               <svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 19.5V6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v13.5"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>
               <span>آخرین مطالب</span>
             </a>
           </div>
         </div>
-
       </div>
     </div>
   </section>
 
+  <!-- VIDEOS -->
   <section class="section" id="episodes">
     <div class="container">
       <div class="section-head reveal">
         <h2 class="section-title">قسمت‌های <span>مسکن‌تاک</span></h2>
-        <a href="#" class="section-link">
+        <a href="/videos/" class="section-link">
           آرشیو برنامه‌ها
           <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
         </a>
       </div>
 
-      <div class="bento">
-        <article class="bento-card bc-amber reveal">
-          <div class="v-thumb">
-            <img src="https://images.unsplash.com/photo-1531403009284-440f080d1e12?w=700&q=80&auto=format&fit=crop" alt="">
-            <div class="v-play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
-            <span class="v-time">۴۵:۲۰</span>
-          </div>
-          <div class="bento-meta">
-            <span class="bento-tag">تحلیل بازار</span>
-            <h3 class="bento-title">حباب قیمت مسکن در پایتخت</h3>
-            <div class="bento-foot"><span>دکتر مرادی</span><span>۲ هفته پیش</span></div>
-          </div>
-        </article>
-
-        <article class="bento-card bc-indigo reveal">
-          <div class="v-thumb">
-            <img src="https://images.unsplash.com/photo-1551836022-d5d88e9218df?w=700&q=80&auto=format&fit=crop" alt="">
-            <div class="v-play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
-            <span class="v-time">۵۲:۱۰</span>
-          </div>
-          <div class="bento-meta">
-            <span class="bento-tag">مصاحبه اختصاصی</span>
-            <h3 class="bento-title">گفتگو با کارشناس اقتصاد مسکن</h3>
-            <div class="bento-foot"><span>مهندس کاظمی</span><span>هفته گذشته</span></div>
-          </div>
-        </article>
-
-        <article class="bento-card bc-coral reveal">
-          <div class="v-thumb">
-            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=700&q=80&auto=format&fit=crop" alt="">
-            <div class="v-play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
-            <span class="v-time">۴۱:۰۵</span>
-          </div>
-          <div class="bento-meta">
-            <span class="bento-tag">قوانین و مقررات</span>
-            <h3 class="bento-title">قانون جهش تولید مسکن به کجا رسید؟</h3>
-            <div class="bento-foot"><span>علی رستگار</span><span>۲ هفته پیش</span></div>
-          </div>
-        </article>
-
-        <article class="bento-card bc-light reveal">
-          <div class="v-thumb">
-            <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=700&q=80&auto=format&fit=crop" alt="">
-            <div class="v-play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
-            <span class="v-time">۳۸:۴۰</span>
-          </div>
-          <div class="bento-meta">
-            <span class="bento-tag">وام و تسهیلات</span>
-            <h3 class="bento-title">وام مسکن جوانان؛ فرصت یا تله بانکی؟</h3>
-            <div class="bento-foot"><span>حسین نوری</span><span>۳ هفته پیش</span></div>
-          </div>
-        </article>
-
-        <div class="split-stack">
-          <article class="bento-card bc-amber-soft compact-h reveal">
-            <div class="v-thumb">
-              <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=500&q=80&auto=format&fit=crop" alt="">
-              <div class="v-play" style="width:30px;height:30px;">
-                <svg viewBox="0 0 24 24" style="width:11px;height:11px;"><path d="M8 5v14l11-7z"/></svg>
-              </div>
-              <span class="v-time" style="font-size:.55rem;padding:2px 5px;">۰۳:۱۰</span>
-            </div>
-            <div class="bento-meta">
-              <span class="bento-tag">کوتاه</span>
-              <h4 class="bento-title">چرا اجاره‌ها بالا رفت؟</h4>
-              <span style="font-size:.58rem;font-weight:800;opacity:.9;display:block;margin-top:3px;color:var(--brand);">مشاهده ↗</span>
-            </div>
-          </article>
-
-          <article class="bento-card bc-indigo-hi compact-h reveal">
-            <div class="v-thumb">
-              <img src="https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=500&q=80&auto=format&fit=crop" alt="">
-              <div class="v-play" style="width:30px;height:30px;">
-                <svg viewBox="0 0 24 24" style="width:11px;height:11px;"><path d="M8 5v14l11-7z"/></svg>
-              </div>
-              <span class="v-time" style="font-size:.55rem;padding:2px 5px;">۰۴:۴۵</span>
-            </div>
-            <div class="bento-meta">
-              <span class="pill-badge">★ ویژه</span>
-              <h4 class="bento-title">پیش‌بینی بازار ۱۴۰۵</h4>
-            </div>
-          </article>
+      {videos.length === 0 ? (
+        <div class="empty-state">هنوز ویدیویی منتشر نشده. از پنل مدیریت اضافه کنید.</div>
+      ) : (
+        <div class="bento">
+          {videos.slice(0, 7).map((v, i) => {
+            const colors = ['bc-amber', 'bc-indigo', 'bc-coral', 'bc-light', 'bc-amber-soft', 'bc-indigo-hi'];
+            const color = colors[i % colors.length];
+            return (
+              <a href={`/articles/${v.id}/`} class={`bento-card ${color} reveal`}>
+                <div class="v-thumb">
+                  {v.data.cover ? <img src={v.data.cover} alt="" /> : <div class="ph-placeholder"></div>}
+                  <div class="v-play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+                  {v.data.duration && <span class="v-time">{v.data.duration}</span>}
+                </div>
+                <div class="bento-meta">
+                  <span class="bento-tag">{v.data.tags[0] ?? 'برنامه'}</span>
+                  <h3 class="bento-title">{v.data.title}</h3>
+                  <div class="bento-foot"><span>{v.data.author}</span><span>{v.data.publishDate.toLocaleDateString('fa-IR')}</span></div>
+                </div>
+              </a>
+            );
+          })}
         </div>
-
-        <article class="bento-card bc-indigo reveal">
-          <div class="v-thumb">
-            <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=700&q=80&auto=format&fit=crop" alt="">
-            <div class="v-play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
-            <span class="v-time">۴۹:۱۵</span>
-          </div>
-          <div class="bento-meta">
-            <span class="bento-tag">ساخت‌وساز</span>
-            <h3 class="bento-title">چالش‌های ساخت‌وساز در ایران</h3>
-            <div class="bento-foot"><span>علی رستگار</span><span>۱ ماه پیش</span></div>
-          </div>
-        </article>
-      </div>
+      )}
     </div>
   </section>
 
+  <!-- REELS -->
   <section class="section" id="reels" style="padding-top:0">
     <div class="container">
       <div class="reels-panel reveal">
@@ -178,6 +111,7 @@ const newsList = sorted.slice(1, 6);
             برش‌های کوتاه <span class="accent">مسکن‌تاک</span>
           </h2>
           <div class="reel-arrows">
+            <a href="/reels/" class="section-link" style="margin-inline-end:.5rem">همه</a>
             <button id="reelPrev" aria-label="قبلی">
               <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
             </button>
@@ -187,71 +121,30 @@ const newsList = sorted.slice(1, 6);
           </div>
         </div>
 
-        <div class="reels-track" id="reelsTrack">
-          <a href="#" class="reel">
-            <img src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=500&q=80&auto=format&fit=crop" alt="">
-            <span class="reel-badge"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l7 4.5-7 4.5z"/></svg></span>
-            <span class="reel-play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span>
-            <span class="reel-info">
-              <h4>خلاصه صحبت‌های وزیر</h4>
-              <span>۰:۵۸ · ۱۲۴ هزار بازدید</span>
-            </span>
-          </a>
-
-          <a href="#" class="reel">
-            <img src="https://images.unsplash.com/photo-1502672260266-1c1e5250adfd?w=500&q=80&auto=format&fit=crop" alt="">
-            <span class="reel-badge"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l7 4.5-7 4.5z"/></svg></span>
-            <span class="reel-play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span>
-            <span class="reel-info">
-              <h4>چرا اجاره‌ها بالا رفت؟</h4>
-              <span>۱:۱۲ · ۸۹ هزار بازدید</span>
-            </span>
-          </a>
-
-          <a href="#" class="reel">
-            <img src="https://images.unsplash.com/photo-1449844908441-8829872d2607?w=500&q=80&auto=format&fit=crop" alt="">
-            <span class="reel-badge"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l7 4.5-7 4.5z"/></svg></span>
-            <span class="reel-play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span>
-            <span class="reel-info">
-              <h4>راهکار خرید خانه با بودجه کم</h4>
-              <span>۰:۴۵ · ۶۷ هزار بازدید</span>
-            </span>
-          </a>
-
-          <a href="#" class="reel">
-            <img src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=500&q=80&auto=format&fit=crop" alt="">
-            <span class="reel-badge"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l7 4.5-7 4.5z"/></svg></span>
-            <span class="reel-play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span>
-            <span class="reel-info">
-              <h4>پیش‌بینی بازار تا پایان سال</h4>
-              <span>۱:۰۳ · ۵۴ هزار بازدید</span>
-            </span>
-          </a>
-
-          <a href="#" class="reel">
-            <img src="https://images.unsplash.com/photo-1558036117-15d82a90b968?w=500&q=80&auto=format&fit=crop" alt="">
-            <span class="reel-badge"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l7 4.5-7 4.5z"/></svg></span>
-            <span class="reel-play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span>
-            <span class="reel-info">
-              <h4>نکته‌ای که در اجاره‌نامه نباید فراموش کنی</h4>
-              <span>۰:۵۲ · ۴۸ هزار بازدید</span>
-            </span>
-          </a>
-
-          <a href="#" class="reel">
-            <img src="https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=500&q=80&auto=format&fit=crop" alt="">
-            <span class="reel-badge"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l7 4.5-7 4.5z"/></svg></span>
-            <span class="reel-play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span>
-            <span class="reel-info">
-              <h4>خانه‌های کلنگی؛ بخرم یا نه؟</h4>
-              <span>۱:۰۸ · ۴۱ هزار بازدید</span>
-            </span>
-          </a>
-        </div>
+        {reels.length === 0 ? (
+          <div class="empty-state" style="margin:1rem 1.35rem">هنوز کلیپ کوتاهی منتشر نشده.</div>
+        ) : (
+          <div class="reels-track" id="reelsTrack">
+            {reels.map(r => (
+              <a href={`/articles/${r.id}/`} class="reel">
+                {r.data.cover ? <img src={r.data.cover} alt="" /> : <div class="ph-placeholder full"></div>}
+                <span class="reel-badge">
+                  <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                </span>
+                <span class="reel-play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span>
+                <span class="reel-info">
+                  <h4>{r.data.title}</h4>
+                  <span>{r.data.duration ?? ''} {r.data.duration ? '·' : ''} {r.data.category}</span>
+                </span>
+              </a>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   </section>
 
+  <!-- ARTICLES (excluding videos) -->
   <section class="section" id="articles" style="padding-top:0">
     <div class="container">
       <div class="section-head reveal">
@@ -262,10 +155,12 @@ const newsList = sorted.slice(1, 6);
         </a>
       </div>
 
-      {newsHero ? (
+      {articles.length === 0 ? (
+        <div class="empty-state">هنوز مقاله‌ای منتشر نشده.</div>
+      ) : (
         <div class="news-grid">
           <a href={`/articles/${newsHero.id}/`} class="news-hero reveal">
-            <img src={newsHero.data.cover ?? "https://images.unsplash.com/photo-1480074568708-e7b720bb3f09?w=1400&q=80&auto=format&fit=crop"} alt={newsHero.data.title}>
+            {newsHero.data.cover ? <img src={newsHero.data.cover} alt={newsHero.data.title} /> : <div class="ph-placeholder full"></div>}
             <div class="news-hero-body">
               <span class="news-hero-badge">{newsHero.data.category}</span>
               <h3>{newsHero.data.title}</h3>
@@ -278,30 +173,21 @@ const newsList = sorted.slice(1, 6);
           </a>
 
           <div class="news-stack reveal">
-            {newsList.length > 0 ? newsList.map((article, i) => (
-              <a href={`/articles/${article.id}/`} class="news-card">
+            {newsList.map((a, i) => (
+              <a href={`/articles/${a.id}/`} class="news-card">
                 <div class="news-card-thumb">
-                  <img src={article.data.cover ?? "https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=300&q=80&auto=format&fit=crop"} alt={article.data.title}>
+                  {a.data.cover ? <img src={a.data.cover} alt="" /> : <div class="ph-placeholder full"></div>}
                 </div>
                 <div class="news-card-body">
                   <span class={`news-card-cat ${i % 3 === 0 ? 'cat-amber' : i % 3 === 1 ? 'cat-coral' : 'cat-light'}`}>
-                    {article.data.category}
+                    {a.data.category}
                   </span>
-                  <h4>{article.data.title}</h4>
-                  <span class="news-card-date">{article.data.publishDate.toLocaleDateString('fa-IR')}</span>
+                  <h4>{a.data.title}</h4>
+                  <span class="news-card-date">{a.data.publishDate.toLocaleDateString('fa-IR')}</span>
                 </div>
               </a>
-            )) : (
-              <div style="padding:2rem;text-align:center;color:var(--text-dim);background:var(--card);border:1px solid var(--line);border-radius:18px;">
-                <p style="font-size:.9rem;">هنوز مقاله‌ای منتشر نشده.</p>
-              </div>
-            )}
+            ))}
           </div>
-        </div>
-      ) : (
-        <div style="padding:3rem;text-align:center;color:var(--text-dim);background:var(--card);border:1px solid var(--line);border-radius:24px;">
-          <h3 style="font-size:1.2rem;margin-bottom:.5rem;color:#fff;">هنوز مقاله‌ای منتشر نشده</h3>
-          <p style="font-size:.9rem;">اولین مقاله را از پنل مدیریت اضافه کنید.</p>
         </div>
       )}
     </div>

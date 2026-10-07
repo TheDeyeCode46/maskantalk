@@ -11,6 +11,7 @@ const articles = defineCollection({
     category: z.string().default('خبر'),
     tags: z.array(z.string()).default([]),
     aparatHash: z.string().optional(),
+    instagramUrl: z.string().optional(),
     duration: z.string().optional(),
     author: z.string().default('تحریریه'),
     featured: z.boolean().default(false),
