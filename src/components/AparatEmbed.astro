@@ -1,30 +1,24 @@
 ---
-import { extractAparatHash } from '../lib/aparat';
+import { buildAparatEmbedUrl } from '../lib/aparat';
 
 interface Props {
   hash: string;
   title?: string;
   aspect?: '16:9' | '9:16';
   autoplay?: boolean;
-  mode?: 'iframe' | 'modal-trigger';
 }
 const {
   hash: rawHash,
   title = 'ویدیو مسکن‌تاک',
   aspect = '16:9',
   autoplay = false,
-  mode = 'iframe',
 } = Astro.props;
 
-const hash = extractAparatHash(rawHash);
-const padding = aspect === '9:16' ? '177.78%' : '56.25%';
-const params = autoplay ? '?autoplay=1' : '';
-const embedUrl = hash
-  ? `https://www.aparat.com/video/video/embed/videohash/${hash}/vt/frame${params}`
-  : null;
+const embedUrl = buildAparatEmbedUrl(rawHash, { autoplay });
+const aspectClass = aspect === '9:16' ? 'vertical' : 'horizontal';
 ---
 {embedUrl ? (
-  <div class={`aparat-wrap aspect-${aspect === '9:16' ? 'vertical' : 'horizontal'}`}>
+  <div class={`aparat-wrap aspect-${aspectClass}`}>
     <iframe
       src={embedUrl}
       title={title}
@@ -54,6 +48,7 @@ const embedUrl = hash
     overflow: hidden;
     border-radius: 16px;
     background: #050508;
+    margin: 1.5rem 0;
   }
   .aparat-wrap.aspect-horizontal { padding-bottom: 56.25%; }
   .aparat-wrap.aspect-vertical { padding-bottom: 177.78%; }
@@ -75,6 +70,10 @@ const embedUrl = hash
     border-radius: 16px;
     color: #aaa;
     font-size: .9rem;
+    margin: 1.5rem 0;
   }
-  .aparat-error a { color: #F5A623; text-decoration: underline; }
+  .aparat-error a {
+    color: #F5A623;
+    text-decoration: underline;
+  }
 </style>
