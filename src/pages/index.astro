@@ -2,13 +2,14 @@
 import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { extractAparatHash } from '../lib/aparat';
+import { normCat, toFa } from '../lib/categories'; // eslint-disable-line
+import { faDigits } from '../lib/format';
 
 const all = await getCollection('articles');
 const sorted = all.sort((a, b) =>
   b.data.publishDate.valueOf() - a.data.publishDate.valueOf()
 );
 
-const normCat = (c) => String(c || '').replace(/[\u200b\u200c\u200d\ufeff]/g, '').trim();
 const isVideo = (a) => normCat(a.data.category) === 'ویدیو';
 const isReel = (a) => normCat(a.data.category) === 'کوتاه';
 const isArticle = (a) => !isVideo(a) && !isReel(a);
@@ -23,7 +24,7 @@ const heroHash = featured?.data.aparatHash ? extractAparatHash(featured.data.apa
 const heroHasVideo = !!(heroIsVideo && heroHash);
 const heroEpisode = featured?.data.episode;
 const heroBtnText = heroEpisode
-  ? `صفحه قسمت ${heroEpisode}`
+  ? `صفحه قسمت ${toFa(heroEpisode)}`
   : (heroIsVideo ? 'صفحه قسمت' : 'خواندن مطلب');
 
 const newsHero = articles[0];
@@ -45,6 +46,9 @@ const newsList = articles.slice(1, 6);
             <span class="dot" aria-hidden="true"></span>
             جدیدترین
           </span>
+          {featured?.data.duration && (
+            <span class="hero-duration">{faDigits(featured.data.duration)}</span>
+          )}
           {heroHasVideo && featured ? (
             <button
               type="button"
@@ -58,7 +62,6 @@ const newsList = articles.slice(1, 6);
           ) : featured ? (
             <a href={`/articles/${featured.id}/`} class="hero-link-overlay" aria-label="مشاهده"></a>
           ) : null}
-          {featured?.data.duration && <span class="hero-duration">{featured.data.duration}</span>}
         </div>
 
         <div class="hero-content">
@@ -101,112 +104,29 @@ const newsList = articles.slice(1, 6);
         <div class="empty-state">هنوز ویدیویی منتشر نشده. از پنل مدیریت اضافه کنید.</div>
       ) : (
         <div class="bento">
-          {/* 4 large cards */}
-          {videos[0] && (
-            <a href={`/articles/${videos[0].id}/`} class="bento-card bc-amber reveal">
-              <div class="v-thumb">
-                {videos[0].data.cover ? <img src={videos[0].data.cover} alt="" loading="lazy" /> : <div class="ph-placeholder">تصویر</div>}
-                <div class="v-play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
-                {videos[0].data.duration && <span class="v-time">{videos[0].data.duration}</span>}
-              </div>
-              <div class="bento-meta">
-                <span class="bento-tag">{videos[0].data.tags[0] ?? 'برنامه'}</span>
-                <h3 class="bento-title">{videos[0].data.title}</h3>
-                <div class="bento-foot"><span>{videos[0].data.author}</span><span>{videos[0].data.publishDate.toLocaleDateString('fa-IR')}</span></div>
-              </div>
-            </a>
-          )}
-
-          {videos[1] && (
-            <a href={`/articles/${videos[1].id}/`} class="bento-card bc-indigo reveal">
-              <div class="v-thumb">
-                {videos[1].data.cover ? <img src={videos[1].data.cover} alt="" loading="lazy" /> : <div class="ph-placeholder">تصویر</div>}
-                <div class="v-play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
-                {videos[1].data.duration && <span class="v-time">{videos[1].data.duration}</span>}
-              </div>
-              <div class="bento-meta">
-                <span class="bento-tag">{videos[1].data.tags[0] ?? 'برنامه'}</span>
-                <h3 class="bento-title">{videos[1].data.title}</h3>
-                <div class="bento-foot"><span>{videos[1].data.author}</span><span>{videos[1].data.publishDate.toLocaleDateString('fa-IR')}</span></div>
-              </div>
-            </a>
-          )}
-
-          {videos[2] && (
-            <a href={`/articles/${videos[2].id}/`} class="bento-card bc-coral reveal">
-              <div class="v-thumb">
-                {videos[2].data.cover ? <img src={videos[2].data.cover} alt="" loading="lazy" /> : <div class="ph-placeholder">تصویر</div>}
-                <div class="v-play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
-                {videos[2].data.duration && <span class="v-time">{videos[2].data.duration}</span>}
-              </div>
-              <div class="bento-meta">
-                <span class="bento-tag">{videos[2].data.tags[0] ?? 'برنامه'}</span>
-                <h3 class="bento-title">{videos[2].data.title}</h3>
-                <div class="bento-foot"><span>{videos[2].data.author}</span><span>{videos[2].data.publishDate.toLocaleDateString('fa-IR')}</span></div>
-              </div>
-            </a>
-          )}
-
-          {videos[3] && (
-            <a href={`/articles/${videos[3].id}/`} class="bento-card bc-light reveal">
-              <div class="v-thumb">
-                {videos[3].data.cover ? <img src={videos[3].data.cover} alt="" loading="lazy" /> : <div class="ph-placeholder">تصویر</div>}
-                <div class="v-play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
-                {videos[3].data.duration && <span class="v-time">{videos[3].data.duration}</span>}
-              </div>
-              <div class="bento-meta">
-                <span class="bento-tag">{videos[3].data.tags[0] ?? 'برنامه'}</span>
-                <h3 class="bento-title">{videos[3].data.title}</h3>
-                <div class="bento-foot"><span>{videos[3].data.author}</span><span>{videos[3].data.publishDate.toLocaleDateString('fa-IR')}</span></div>
-              </div>
-            </a>
-          )}
-
-          {/* split-stack: 2 compact cards */}
-          {(videos[4] || videos[5]) && (
-            <div class="split-stack">
-              {videos[4] && (
-                <a href={`/articles/${videos[4].id}/`} class="bento-card bc-amber-soft compact-h reveal">
-                  <div class="v-thumb">
-                    {videos[4].data.cover ? <img src={videos[4].data.cover} alt="" loading="lazy" /> : <div class="ph-placeholder">تصویر</div>}
-                    <div class="v-play" style="width:28px;height:28px;"><svg viewBox="0 0 24 24" style="width:10px;height:10px;"><path d="M8 5v14l11-7z"/></svg></div>
+          {videos.slice(0, 9).map((v, i) => {
+            const colors = ['bc-amber', 'bc-indigo', 'bc-coral', 'bc-light', 'bc-amber-soft', 'bc-indigo-hi'];
+            const color = colors[i % colors.length];
+            return (
+              <a href={`/articles/${v.id}/`} class={`bento-card ${color} reveal`}>
+                <div class="v-thumb">
+                  {v.data.cover
+                    ? <img src={v.data.cover} alt="" loading="lazy" />
+                    : <div class="ph-placeholder">تصویر</div>}
+                  <div class="v-play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+                  {v.data.duration && <span class="v-time">{faDigits(v.data.duration)}</span>}
+                </div>
+                <div class="bento-meta">
+                  <span class="bento-tag">{v.data.tags[0] ?? 'برنامه'}</span>
+                  <h3 class="bento-title">{v.data.title}</h3>
+                  <div class="bento-foot">
+                    <span>{v.data.author}</span>
+                    <span>{toFa(v.data.publishDate.toLocaleDateString('fa-IR'))}</span>
                   </div>
-                  <div class="bento-meta">
-                    <span class="bento-tag">{videos[4].data.tags[0] ?? 'برنامه'}</span>
-                    <h4 class="bento-title">{videos[4].data.title}</h4>
-                  </div>
-                </a>
-              )}
-              {videos[5] && (
-                <a href={`/articles/${videos[5].id}/`} class="bento-card bc-indigo-hi compact-h reveal">
-                  <div class="v-thumb">
-                    {videos[5].data.cover ? <img src={videos[5].data.cover} alt="" loading="lazy" /> : <div class="ph-placeholder">تصویر</div>}
-                    <div class="v-play" style="width:28px;height:28px;"><svg viewBox="0 0 24 24" style="width:10px;height:10px;"><path d="M8 5v14l11-7z"/></svg></div>
-                  </div>
-                  <div class="bento-meta">
-                    <span class="bento-tag">{videos[5].data.tags[0] ?? 'برنامه'}</span>
-                    <h4 class="bento-title">{videos[5].data.title}</h4>
-                  </div>
-                </a>
-              )}
-            </div>
-          )}
-
-          {/* 7th slot */}
-          {videos[6] && (
-            <a href={`/articles/${videos[6].id}/`} class="bento-card bc-indigo reveal">
-              <div class="v-thumb">
-                {videos[6].data.cover ? <img src={videos[6].data.cover} alt="" loading="lazy" /> : <div class="ph-placeholder">تصویر</div>}
-                <div class="v-play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
-                {videos[6].data.duration && <span class="v-time">{videos[6].data.duration}</span>}
-              </div>
-              <div class="bento-meta">
-                <span class="bento-tag">{videos[6].data.tags[0] ?? 'برنامه'}</span>
-                <h3 class="bento-title">{videos[6].data.title}</h3>
-                <div class="bento-foot"><span>{videos[6].data.author}</span><span>{videos[6].data.publishDate.toLocaleDateString('fa-IR')}</span></div>
-              </div>
-            </a>
-          )}
+                </div>
+              </a>
+            );
+          })}
         </div>
       )}
     </div>
@@ -222,7 +142,7 @@ const newsList = articles.slice(1, 6);
             برش‌های کوتاه <span class="accent">مسکن‌تاک</span>
           </h2>
           <div class="reel-arrows">
-            <a href="/reels/" class="section-link" style="margin-inline-end:.5rem">همه</a>
+            <a href="/reels/" class="section-link" style="margin-inline-end:.5rem">آرشیو ویدیوهای کوتاه</a>
             <button id="reelPrev" aria-label="قبلی">
               <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
             </button>
@@ -253,7 +173,7 @@ const newsList = articles.slice(1, 6);
                   <span class="reel-play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span>
                   <span class="reel-info">
                     <h4>{r.data.title}</h4>
-                    <span>{r.data.duration ?? ''}{r.data.duration ? ' · ' : ''}{r.data.publishDate.toLocaleDateString('fa-IR')}</span>
+                    <span>{r.data.duration ? faDigits(r.data.duration) + ' · ' : ''}{toFa(r.data.publishDate.toLocaleDateString('fa-IR'))}</span>
                   </span>
                 </button>
               );
@@ -287,7 +207,7 @@ const newsList = articles.slice(1, 6);
               <div class="news-hero-meta">
                 <span>{newsHero.data.author}</span>
                 <span class="sep"></span>
-                <span>{newsHero.data.publishDate.toLocaleDateString('fa-IR')}</span>
+                <span>{toFa(newsHero.data.publishDate.toLocaleDateString('fa-IR'))}</span>
               </div>
             </div>
           </a>
@@ -303,7 +223,7 @@ const newsList = articles.slice(1, 6);
                     {a.data.category}
                   </span>
                   <h4>{a.data.title}</h4>
-                  <span class="news-card-date">{a.data.publishDate.toLocaleDateString('fa-IR')}</span>
+                  <span class="news-card-date">{toFa(a.data.publishDate.toLocaleDateString('fa-IR'))}</span>
                 </div>
               </a>
             ))}
@@ -318,7 +238,6 @@ const newsList = articles.slice(1, 6);
 (function(){
   'use strict';
 
-  /* Hero: click play → swap thumbnail for iframe */
   document.addEventListener('click', function(e){
     var btn = e.target.closest && e.target.closest('[data-hero-hash]');
     if (!btn) return;
@@ -344,7 +263,6 @@ const newsList = articles.slice(1, 6);
     visual.appendChild(iframe);
   });
 
-  /* Reels carousel: arrows */
   var track = document.getElementById('reelsTrack');
   var prev = document.getElementById('reelPrev');
   var next = document.getElementById('reelNext');
@@ -359,8 +277,6 @@ const newsList = articles.slice(1, 6);
     next.addEventListener('click', function(){ track.scrollBy({ left: -step(), behavior: 'smooth' }); });
     prev.addEventListener('click', function(){ track.scrollBy({ left: step(), behavior: 'smooth' }); });
   }
-
-  /* Reels: center snap highlight (mobile) */
   if (track && reels.length){
     var rafId = null;
     var isMobile = function(){ return window.matchMedia('(max-width: 900px)').matches; };
