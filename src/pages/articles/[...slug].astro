@@ -3,6 +3,8 @@ import { getCollection, render } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import AparatEmbed from '../../components/AparatEmbed.astro';
 import { extractAparatHash } from '../../lib/aparat';
+import { normCat } from '../../lib/categories';
+import { formatDuration, toFa } from '../../lib/format';
 
 export async function getStaticPaths() {
   const articles = await getCollection('articles');
@@ -15,10 +17,8 @@ export async function getStaticPaths() {
 const { article } = Astro.props;
 const { Content } = await render(article);
 
-const normCat = (c) => String(c || '').replace(/[\u200b\u200c\u200d\ufeff]/g, '').trim();
 const cat = normCat(article.data.category);
 const isReel = cat === 'کوتاه';
-const isVideo = cat === 'ویدیو';
 const aspect = isReel ? '9:16' : '16:9';
 
 const allArticles = await getCollection('articles');
@@ -35,6 +35,7 @@ const related = allArticles
   .map(x => x.article);
 
 const aparatHash = article.data.aparatHash ? extractAparatHash(article.data.aparatHash) : null;
+const durationFa = formatDuration(article.data.duration);
 ---
 <BaseLayout title={article.data.title} description={article.data.description}>
   <section class="page-light">
@@ -46,10 +47,14 @@ const aparatHash = article.data.aparatHash ? extractAparatHash(article.data.apar
           <div class="single-meta">
             <span>{article.data.author}</span>
             <span>·</span>
-            <span>{article.data.publishDate.toLocaleDateString('fa-IR')}</span>
-            {article.data.duration && <><span>·</span><span>{article.data.duration}</span></>}
-            {article.data.episode && <><span>·</span><span>قسمت {article.data.episode}</span></>}
+            <span>{toFa(article.data.publishDate.toLocaleDateString('fa-IR'))}</span>
+            {article.data.episode && <><span>·</span><span>قسمت {toFa(article.data.episode)}</span></>}
           </div>
+          {durationFa && (
+            <div class="program-duration" style="margin-top:.75rem;">
+              <strong>طول برنامه:</strong> <span>{durationFa}</span>
+            </div>
+          )}
         </div>
 
         {aparatHash && (
