@@ -2629,23 +2629,25 @@ ul, ol { list-style: none; }
     display: block;
     position: fixed;
     left: 0; right: 0;
-    bottom: max(8px, env(safe-area-inset-bottom, 8px));
+    bottom: max(6px, env(safe-area-inset-bottom, 6px));
     z-index: 200;
-    padding: 0 10px;
+    padding: 0 12px;
     pointer-events: none;
+    border: none;
+    background: transparent;
   }
   .bottom-inner {
-    max-width: 420px;
+    max-width: 360px;
     margin: 0 auto;
     display: flex;
-    gap: 2px;
-    padding: 5px;
-    background: rgba(16,17,23,.94);
+    gap: 1px;
+    padding: 4px;
+    background: rgba(16,17,23,.96);
     backdrop-filter: blur(28px) saturate(1.8);
     -webkit-backdrop-filter: blur(28px) saturate(1.8);
-    border: 1px solid rgba(255,255,255,.08);
-    border-radius: 20px;
-    box-shadow: 0 10px 30px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.05);
+    border: 1px solid rgba(255,255,255,.06);
+    border-radius: 26px;
+    box-shadow: 0 10px 28px rgba(0,0,0,.55);
     pointer-events: auto;
   }
   .bn-item {
@@ -2655,23 +2657,25 @@ ul, ol { list-style: none; }
     align-items: center;
     justify-content: center;
     gap: 1px;
-    padding: 6px 2px 5px;
-    border-radius: 15px;
+    padding: 5px 2px 4px;
+    border-radius: 20px;
     color: #8A8DA0;
     background: transparent;
-    transition: all .25s var(--ease);
+    transition: all .22s var(--ease);
     min-width: 0;
+    border: none;
+    outline: none;
     -webkit-tap-highlight-color: transparent;
   }
   .bn-item svg {
-    width: 19px; height: 19px;
+    width: 18px; height: 18px;
     stroke: currentColor; fill: none;
     stroke-width: 1.9;
     stroke-linecap: round; stroke-linejoin: round;
-    transition: all .25s var(--ease);
+    transition: all .22s var(--ease);
   }
   .bn-item span {
-    font-size: .58rem;
+    font-size: .55rem;
     font-weight: 700;
     line-height: 1;
     letter-spacing: .01em;
@@ -2683,10 +2687,12 @@ ul, ol { list-style: none; }
   .bn-item.active {
     background: linear-gradient(135deg, var(--brand), var(--accent));
     color: #fff;
-    box-shadow: 0 4px 14px -4px rgba(245,166,35,.7), inset 0 1px 0 rgba(255,255,255,.3);
+    box-shadow: 0 4px 12px -3px rgba(245,166,35,.7), inset 0 1px 0 rgba(255,255,255,.28);
   }
   .bn-item.active svg { stroke-width: 2.3; }
   .bn-item:active { transform: scale(.94); }
+  .bn-item::before,
+  .bn-item::after { content: none !important; display: none !important; }
 }
 
 /* ============================================================
@@ -2862,18 +2868,38 @@ ul, ol { list-style: none; }
 /* ============================================================
    BENTO
    ============================================================ */
-.bento { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--gap); grid-auto-rows: minmax(180px, auto); }
+.bento {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--gap);
+  grid-auto-rows: auto;
+}
 .bento-card {
   border-radius: var(--r-md);
-  overflow: hidden; position: relative;
-  padding: 10px; display: flex; flex-direction: column; gap: 8px;
+  overflow: hidden;
+  position: relative;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
   transition: transform .35s var(--ease), box-shadow .35s var(--ease);
-  cursor: pointer; min-width: 0; border: 1px solid transparent;
+  cursor: pointer;
+  min-width: 0;
+  border: 1px solid transparent;
 }
 .bento-card:hover { transform: translateY(-3px); box-shadow: 0 18px 36px -14px rgba(0,0,0,.6); }
+
+.bento-card.wide { grid-column: span 3; }
+.bento-card.wide .v-thumb { aspect-ratio: 21/9; }
+
 .v-thumb {
-  width: 100%; aspect-ratio: 16/9; border-radius: 12px;
-  position: relative; overflow: hidden; background: #050508; flex-shrink: 0;
+  width: 100%;
+  aspect-ratio: 16/9;
+  border-radius: 12px;
+  position: relative;
+  overflow: hidden;
+  background: #050508;
+  flex-shrink: 0;
 }
 .v-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .5s var(--ease); }
 .bento-card:hover .v-thumb img { transform: scale(1.05); }
@@ -2927,12 +2953,6 @@ ul, ol { list-style: none; }
 .bc-light .bento-foot { color: #5A5A5A; }
 .bc-light .bento-title { color: var(--ink); }
 
-.split-stack { display: grid; grid-template-rows: 1fr 1fr; gap: var(--gap); min-height: 0; }
-.compact-h { display: flex; flex-direction: row; align-items: center; gap: 10px; padding: 10px; min-height: 0; }
-.compact-h .v-thumb { width: 45%; height: 100%; aspect-ratio: auto; flex-shrink: 0; border-radius: 10px; }
-.compact-h .bento-meta { flex: 1; justify-content: center; gap: 2px; }
-.compact-h .bento-title { font-size: .8rem; }
-
 .ph-placeholder {
   width: 100%; height: 100%; min-height: 100px;
   background: linear-gradient(135deg, #1e212a, #101117);
@@ -2941,6 +2961,20 @@ ul, ol { list-style: none; }
   font-size: .7rem; font-weight: 700;
 }
 .ph-placeholder.full { position: absolute; inset: 0; }
+
+/* Program duration for article pages */
+.program-duration {
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+  color: var(--ink-3);
+  font-weight: 600;
+  font-size: .85rem;
+}
+.program-duration strong {
+  color: var(--ink);
+  font-weight: 800;
+}
 
 /* ============================================================
    REELS CAROUSEL
@@ -3471,12 +3505,14 @@ ul, ol { list-style: none; }
 
   /* BENTO MOBILE — flat single column */
   .bento { grid-template-columns: 1fr; gap: .75rem; grid-auto-rows: auto; }
-  .split-stack { display: contents; }
-  .bento-card, .compact-h {
-    flex-direction: column; align-items: stretch;
-    padding: 10px; gap: 8px; border-radius: 18px;
+  .bento-card.wide { grid-column: span 1; }
+  .bento-card.wide .v-thumb { aspect-ratio: 16/9; }
+  .bento-card {
+    padding: 10px;
+    gap: 8px;
+    border-radius: 18px;
   }
-  .bento-card .v-thumb, .compact-h .v-thumb {
+  .bento-card .v-thumb {
     width: 100%; height: auto; aspect-ratio: 16/9; border-radius: 12px;
   }
   .compact-h .bento-meta { justify-content: flex-start; gap: 3px; }
