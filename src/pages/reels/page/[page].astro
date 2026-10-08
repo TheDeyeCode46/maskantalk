@@ -2,8 +2,7 @@
 import { getCollection } from 'astro:content';
 import ArchiveLayout from '../../../layouts/ArchiveLayout.astro';
 import { extractAparatHash } from '../../../lib/aparat';
-
-const normCat = (c) => String(c || '').replace(/[\u200b\u200c\u200d\ufeff]/g, '').trim();
+import { normCat } from '../../../lib/categories';
 
 export async function getStaticPaths() {
   const all = await getCollection('articles');
