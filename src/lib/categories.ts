@@ -1,3 +1,5 @@
+export { toFa } from './format';
+
 /**
  * Normalize a category string:
  * - Remove zero-width characters (ZWNJ, ZWJ, ZWSP, BOM)
