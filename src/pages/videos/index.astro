@@ -7,28 +7,32 @@ const videos = all
   .filter(a => a.data.category === 'ویدیو')
   .sort((a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf());
 
-const pageSize = 12;
-const data = videos.slice(0, pageSize);
-const lastPage = Math.max(1, Math.ceil(videos.length / pageSize));
+const PAGE_SIZE = 12;
+const data = videos.slice(0, PAGE_SIZE);
+const lastPage = Math.max(1, Math.ceil(videos.length / PAGE_SIZE));
 ---
 <ArchiveLayout
   title="قسمت‌های مسکن‌تاک"
   description="آرشیو کامل قسمت‌های برنامه مسکن‌تاک"
-  intro="همه قسمت‌های برنامه ویدیویی مسکن‌تاک، مرتب‌شده از جدید به قدیم."
+  intro="همه قسمت‌های برنامه ویدیویی مسکن‌تاک، مرتب از جدید به قدیم."
 >
   {data.length === 0 ? (
     <div class="empty-state">هنوز ویدیویی منتشر نشده.</div>
   ) : (
-    <div class="archive-grid-3">
+    <div class="archive-grid">
       {data.map(v => (
         <a href={`/articles/${v.id}/`} class="archive-card">
-          <div class="ac-thumb">{v.data.cover && <img src={v.data.cover} alt="" />}</div>
+          <div class="ac-thumb">
+            {v.data.cover ? <img src={v.data.cover} alt="" loading="lazy" /> : <div class="ph-placeholder full"></div>}
+            <span class="ac-play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span>
+          </div>
           <div class="ac-body">
             <span class="ac-cat">{v.data.tags[0] ?? 'برنامه'}</span>
             <h3 class="ac-title">{v.data.title}</h3>
             <p class="ac-desc">{v.data.description}</p>
             <div class="ac-meta">
-              <span>{v.data.author}</span><span>·</span>
+              <span>{v.data.author}</span>
+              <span>·</span>
               <span>{v.data.publishDate.toLocaleDateString('fa-IR')}</span>
               {v.data.duration && <><span>·</span><span>{v.data.duration}</span></>}
             </div>
@@ -38,11 +42,13 @@ const lastPage = Math.max(1, Math.ceil(videos.length / pageSize));
     </div>
   )}
 
-  <nav class="pagination">
-    <span class="disabled">قبلی</span>
-    {Array.from({ length: lastPage }, (_, i) => i + 1).map(n => (
-      n === 1 ? <span class="current">1</span> : <a href={`/videos/page/${n}/`}>{n}</a>
-    ))}
-    {lastPage > 1 ? <a href="/videos/page/2/">بعدی</a> : <span class="disabled">بعدی</span>}
-  </nav>
+  {lastPage > 1 && (
+    <nav class="pagination">
+      <span class="disabled">قبلی</span>
+      {Array.from({ length: lastPage }, (_, i) => i + 1).map(n => (
+        n === 1 ? <span class="current">{n}</span> : <a href={`/videos/page/${n}/`}>{n}</a>
+      ))}
+      <a href="/videos/page/2/">بعدی</a>
+    </nav>
+  )}
 </ArchiveLayout>

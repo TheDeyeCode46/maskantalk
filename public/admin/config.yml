@@ -20,31 +20,18 @@ collections:
       - { name: title, label: عنوان, widget: string }
       - { name: description, label: توضیح کوتاه, widget: text }
       - { name: publishDate, label: تاریخ انتشار, widget: datetime, date_format: "YYYY-MM-DD", time_format: false, format: "YYYY-MM-DD" }
-      - { name: cover, label: تصویر شاخص / تامبنیل, widget: image, required: false }
+      - { name: cover, label: تصویر شاخص / تامبنیل, widget: image, required: false, hint: "برای برنامه: ۱۹۲۰×۱۰۸۰ — برای ریلز: ۱۰۸۰×۱۹۲۰" }
       - name: category
         label: دسته‌بندی
         widget: select
-        options:
-          - "خبر"
-          - "تحلیل"
-          - "یادداشت"
-          - "داده"
-          - "ویدیو"
-          - "کوتاه"
+        options: ["خبر", "تحلیل", "یادداشت", "داده", "ویدیو", "کوتاه"]
         default: "خبر"
-        hint: "ویدیو = قسمت کامل، کوتاه = ریلز/کلیپ کوتاه، بقیه = مقاله متنی"
+        hint: "ویدیو = قسمت کامل، کوتاه = ریلز، بقیه = مقاله متنی"
       - { name: tags, label: برچسب‌ها, widget: list, required: false, default: [] }
-      - name: aparatHash
-        label: کد ویدیو آپارات
-        widget: string
-        required: false
-        hint: "فقط کد ویدیو. مثلا از aparat.com/v/akd5lfq فقط بنویس akd5lfq"
-      - name: instagramUrl
-        label: لینک اینستاگرام (اختیاری)
-        widget: string
-        required: false
-        hint: "لینک پست یا ریلز اینستاگرام"
+      - { name: aparatHash, label: کد ویدیو آپارات, widget: string, required: false, hint: "مثلا akd5lfq یا لینک کامل" }
+      - { name: instagramUrl, label: لینک اینستاگرام, widget: string, required: false }
       - { name: duration, label: مدت زمان, widget: string, required: false, hint: "مثلا 45:20" }
+      - { name: episode, label: شماره قسمت, widget: number, required: false, value_type: int }
       - { name: author, label: نویسنده, widget: string, default: "تحریریه مسکن‌تاک" }
       - { name: featured, label: در هیرو نمایش داده شود؟, widget: boolean, default: false }
       - { name: body, label: متن, widget: markdown }

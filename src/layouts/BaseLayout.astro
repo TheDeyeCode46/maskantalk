@@ -3,6 +3,7 @@ import '../styles/global.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import BottomNav from '../components/BottomNav.astro';
+import VideoModal from '../components/VideoModal.astro';
 
 interface Props {
   title: string;
@@ -16,13 +17,9 @@ const { title, description = 'مسکن‌تاک — گفتگوهای تخصصی 
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0A0B10">
-<meta name="format-detection" content="telephone=no">
 <title>{title} | مسکن‌تاک</title>
 <meta name="description" content={description}>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='24' fill='%23F5A623'/><text x='50' y='72' font-size='62' text-anchor='middle' font-family='sans-serif' font-weight='bold' fill='%231A1A1A'>م</text></svg>">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 </head>
 <body>
 <Header />
@@ -31,118 +28,11 @@ const { title, description = 'مسکن‌تاک — گفتگوهای تخصصی 
 </main>
 <Footer />
 <BottomNav />
+<VideoModal />
 
 <script is:inline>
 (function(){
   'use strict';
-
-  var track = document.getElementById('reelsTrack');
-  var prevBtn = document.getElementById('reelPrev');
-  var nextBtn = document.getElementById('reelNext');
-  var reels = track ? track.querySelectorAll('.reel') : [];
-
-  function getReelStep(){
-    if (!track || !reels.length) return 200;
-    var first = reels[0];
-    var style = window.getComputedStyle(track);
-    var gap = parseFloat(style.gap || style.columnGap) || 12;
-    return first.offsetWidth + gap;
-  }
-
-  if (track && prevBtn && nextBtn) {
-    nextBtn.addEventListener('click', function(){
-      track.scrollBy({ left: -getReelStep(), behavior: 'smooth' });
-    });
-    prevBtn.addEventListener('click', function(){
-      track.scrollBy({ left: getReelStep(), behavior: 'smooth' });
-    });
-  }
-
-  if (track && reels.length) {
-    var rafId = null;
-    var isMobile = function(){ return window.matchMedia('(max-width: 900px)').matches; };
-
-    function updateCenter(){
-      rafId = null;
-      if (!isMobile()){
-        reels.forEach(function(r){ r.classList.remove('is-center'); });
-        return;
-      }
-      var trackRect = track.getBoundingClientRect();
-      var trackCenter = trackRect.left + trackRect.width / 2;
-      var best = null;
-      var bestDist = Infinity;
-      reels.forEach(function(r){
-        var rect = r.getBoundingClientRect();
-        var center = rect.left + rect.width / 2;
-        var dist = Math.abs(center - trackCenter);
-        if (dist < bestDist){ bestDist = dist; best = r; }
-      });
-      reels.forEach(function(r){
-        r.classList.toggle('is-center', r === best);
-      });
-    }
-    function scheduleCenter(){
-      if (rafId) return;
-      rafId = requestAnimationFrame(updateCenter);
-    }
-
-    track.addEventListener('scroll', scheduleCenter, { passive: true });
-    window.addEventListener('resize', scheduleCenter);
-    window.addEventListener('orientationchange', scheduleCenter);
-    updateCenter();
-    setTimeout(updateCenter, 200);
-    setTimeout(updateCenter, 600);
-  }
-
-  var bnItems = document.querySelectorAll('.bn-item');
-  var secs = ['top', 'episodes', 'reels', 'articles'];
-  var contactEl = document.getElementById('contact');
-
-  function updateBN(){
-    var y = window.scrollY + 220;
-    var viewportBottom = window.scrollY + window.innerHeight;
-    var pageBottom = document.documentElement.scrollHeight - 40;
-
-    var atFooter = false;
-    if (contactEl) {
-      var contactTop = contactEl.offsetTop;
-      if (y >= contactTop - 100) atFooter = true;
-    }
-    if (viewportBottom >= pageBottom) atFooter = true;
-
-    if (atFooter) {
-      bnItems.forEach(function(item){ item.classList.remove('active'); });
-      return;
-    }
-
-    var cur = 'top';
-    secs.forEach(function(id){
-      var el = document.getElementById(id);
-      if (el && el.offsetTop <= y) cur = id;
-    });
-    bnItems.forEach(function(item){
-      item.classList.toggle('active', item.dataset.nav === cur);
-    });
-  }
-  window.addEventListener('scroll', updateBN, { passive: true });
-  window.addEventListener('resize', updateBN);
-  updateBN();
-
-  var form = document.getElementById('newsForm');
-  if (form) {
-    form.addEventListener('submit', function(e){
-      e.preventDefault();
-      var email = document.getElementById('newsEmail').value.trim();
-      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-        alert('لطفاً یک ایمیل معتبر وارد کنید.');
-        return;
-      }
-      alert('ممنون! ایمیل شما در خبرنامه مسکن‌تاک ثبت شد.');
-      form.reset();
-    });
-  }
-
   if ('IntersectionObserver' in window) {
     var obs = new IntersectionObserver(function(entries){
       entries.forEach(function(en){
@@ -156,7 +46,6 @@ const { title, description = 'مسکن‌تاک — گفتگوهای تخصصی 
   } else {
     document.querySelectorAll('.reveal').forEach(function(el){ el.classList.add('visible'); });
   }
-
 })();
 </script>
 </body>

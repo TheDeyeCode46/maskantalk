@@ -1,17 +1,18 @@
 ---
 import { getCollection } from 'astro:content';
 import ArchiveLayout from '../../../layouts/ArchiveLayout.astro';
+import { extractAparatHash } from '../../../lib/aparat';
 
 export async function getStaticPaths() {
   const all = await getCollection('articles');
   const reels = all
     .filter(a => a.data.category === 'کوتاه')
     .sort((a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf());
-  const pageSize = 16;
-  const totalPages = Math.ceil(reels.length / pageSize);
+  const PAGE_SIZE = 16;
+  const totalPages = Math.ceil(reels.length / PAGE_SIZE);
   const paths = [];
-  for (let i = 1; i < totalPages; i++) {
-    paths.push({ params: { page: String(i + 1) }, props: { pageNum: i + 1 } });
+  for (let i = 2; i <= totalPages; i++) {
+    paths.push({ params: { page: String(i) }, props: { pageNum: i } });
   }
   return paths;
 }
@@ -21,28 +22,45 @@ const all = await getCollection('articles');
 const reels = all
   .filter(a => a.data.category === 'کوتاه')
   .sort((a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf());
-const pageSize = 16;
-const data = reels.slice((pageNum - 1) * pageSize, pageNum * pageSize);
-const lastPage = Math.max(1, Math.ceil(reels.length / pageSize));
+const PAGE_SIZE = 16;
+const data = reels.slice((pageNum - 1) * PAGE_SIZE, pageNum * PAGE_SIZE);
+const lastPage = Math.max(1, Math.ceil(reels.length / PAGE_SIZE));
 ---
 <ArchiveLayout title={`برش‌های کوتاه — صفحه ${pageNum}`}>
   <div class="reels-grid">
-    {data.map(r => (
-      <a href={`/articles/${r.id}/`} class="reel-archive-card">
-        {r.data.cover && <img src={r.data.cover} alt="" />}
-        <div class="body">
-          <h4>{r.data.title}</h4>
-          <span>{r.data.duration ?? ''}</span>
-        </div>
-      </a>
-    ))}
+    {data.map(r => {
+      const hash = extractAparatHash(r.data.aparatHash);
+      return (
+        <button
+          type="button"
+          class="reel-tile"
+          data-video-open
+          data-hash={hash ?? ''}
+          data-title={r.data.title}
+          data-article={r.id}
+          data-instagram={r.data.instagramUrl ?? ''}
+          aria-label={r.data.title}
+        >
+          {r.data.cover ? <img src={r.data.cover} alt="" loading="lazy" /> : <div class="ph-placeholder full"></div>}
+          <span class="reel-play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span>
+          <div class="body">
+            <h4>{r.data.title}</h4>
+            <span>{r.data.duration ?? ''}</span>
+          </div>
+        </button>
+      );
+    })}
   </div>
 
   <nav class="pagination">
     <a href={pageNum === 2 ? '/reels/' : `/reels/page/${pageNum - 1}/`}>قبلی</a>
     {Array.from({ length: lastPage }, (_, i) => i + 1).map(n => (
-      n === pageNum ? <span class="current">{n}</span> : <a href={n === 1 ? '/reels/' : `/reels/page/${n}/`}>{n}</a>
+      n === pageNum
+        ? <span class="current">{n}</span>
+        : <a href={n === 1 ? '/reels/' : `/reels/page/${n}/`}>{n}</a>
     ))}
-    {pageNum < lastPage ? <a href={`/reels/page/${pageNum + 1}/`}>بعدی</a> : <span class="disabled">بعدی</span>}
+    {pageNum < lastPage
+      ? <a href={`/reels/page/${pageNum + 1}/`}>بعدی</a>
+      : <span class="disabled">بعدی</span>}
   </nav>
 </ArchiveLayout>

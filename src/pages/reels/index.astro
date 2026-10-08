@@ -1,42 +1,58 @@
 ---
 import { getCollection } from 'astro:content';
 import ArchiveLayout from '../../layouts/ArchiveLayout.astro';
+import { extractAparatHash } from '../../lib/aparat';
 
 const all = await getCollection('articles');
 const reels = all
   .filter(a => a.data.category === 'کوتاه')
   .sort((a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf());
 
-const pageSize = 16;
-const data = reels.slice(0, pageSize);
-const lastPage = Math.max(1, Math.ceil(reels.length / pageSize));
+const PAGE_SIZE = 16;
+const data = reels.slice(0, PAGE_SIZE);
+const lastPage = Math.max(1, Math.ceil(reels.length / PAGE_SIZE));
 ---
 <ArchiveLayout
   title="برش‌های کوتاه"
   description="ویدیوهای کوتاه و ریلز مسکن‌تاک"
-  intro="کلیپ‌های کوتاه، برش‌های برنامه و ریلزهای اینستاگرام و آپارات."
+  intro="کلیپ‌های کوتاه و ریلزهای مسکن‌تاک — برای پخش روی هر کارت بزنید."
 >
   {data.length === 0 ? (
     <div class="empty-state">هنوز کلیپ کوتاهی منتشر نشده.</div>
   ) : (
     <div class="reels-grid">
-      {data.map(r => (
-        <a href={`/articles/${r.id}/`} class="reel-archive-card">
-          {r.data.cover && <img src={r.data.cover} alt="" />}
-          <div class="body">
-            <h4>{r.data.title}</h4>
-            <span>{r.data.duration ?? ''}</span>
-          </div>
-        </a>
-      ))}
+      {data.map(r => {
+        const hash = extractAparatHash(r.data.aparatHash);
+        return (
+          <button
+            type="button"
+            class="reel-tile"
+            data-video-open
+            data-hash={hash ?? ''}
+            data-title={r.data.title}
+            data-article={r.id}
+            data-instagram={r.data.instagramUrl ?? ''}
+            aria-label={r.data.title}
+          >
+            {r.data.cover ? <img src={r.data.cover} alt="" loading="lazy" /> : <div class="ph-placeholder full"></div>}
+            <span class="reel-play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span>
+            <div class="body">
+              <h4>{r.data.title}</h4>
+              <span>{r.data.duration ?? ''}{r.data.duration ? ' · ' : ''}{r.data.publishDate.toLocaleDateString('fa-IR')}</span>
+            </div>
+          </button>
+        );
+      })}
     </div>
   )}
 
-  <nav class="pagination">
-    <span class="disabled">قبلی</span>
-    {Array.from({ length: lastPage }, (_, i) => i + 1).map(n => (
-      n === 1 ? <span class="current">1</span> : <a href={`/reels/page/${n}/`}>{n}</a>
-    ))}
-    {lastPage > 1 ? <a href="/reels/page/2/">بعدی</a> : <span class="disabled">بعدی</span>}
-  </nav>
+  {lastPage > 1 && (
+    <nav class="pagination">
+      <span class="disabled">قبلی</span>
+      {Array.from({ length: lastPage }, (_, i) => i + 1).map(n => (
+        n === 1 ? <span class="current">{n}</span> : <a href={`/reels/page/${n}/`}>{n}</a>
+      ))}
+      <a href="/reels/page/2/">بعدی</a>
+    </nav>
+  )}
 </ArchiveLayout>

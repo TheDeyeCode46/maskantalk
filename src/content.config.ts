@@ -13,6 +13,7 @@ const articles = defineCollection({
     aparatHash: z.string().optional(),
     instagramUrl: z.string().optional(),
     duration: z.string().optional(),
+    episode: z.number().optional(),
     author: z.string().default('تحریریه'),
     featured: z.boolean().default(false),
   }),

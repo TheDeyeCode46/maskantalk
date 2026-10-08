@@ -6,31 +6,53 @@ interface Props {
   title?: string;
   aspect?: '16:9' | '9:16';
   autoplay?: boolean;
+  lazy?: boolean;
+  poster?: string;
 }
 const {
   hash: rawHash,
   title = 'ویدیو مسکن‌تاک',
   aspect = '16:9',
   autoplay = false,
+  lazy = false,
+  poster,
 } = Astro.props;
 
 const embedUrl = buildAparatEmbedUrl(rawHash, { autoplay });
 const aspectClass = aspect === '9:16' ? 'vertical' : 'horizontal';
+const aspectKey = aspect === '9:16' ? 'aspect-vertical' : 'aspect-horizontal';
 ---
 {embedUrl ? (
-  <div class={`aparat-wrap aspect-${aspectClass}`}>
-    <iframe
-      src={embedUrl}
-      title={title}
-      allow="autoplay; fullscreen; encrypted-media; picture-in-picture; clipboard-write"
-      allowfullscreen
-      webkitallowfullscreen
-      mozallowfullscreen
-      referrerpolicy="strict-origin-when-cross-origin"
-      scrolling="no"
-      frameborder="0"
-    ></iframe>
-  </div>
+  lazy && poster ? (
+    <div
+      class={`aparat-thumb ${aspectKey}`}
+      data-aparat-hash={rawHash}
+      data-aparat-title={title}
+      data-autoplay="1"
+      role="button"
+      tabindex="0"
+      aria-label={title}
+    >
+      <img src={poster} alt={title} loading="lazy" />
+      <span class="aparat-thumb__play" aria-hidden="true">
+        <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+      </span>
+    </div>
+  ) : (
+    <div class={`aparat-wrap ${aspectKey}`}>
+      <iframe
+        src={embedUrl}
+        title={title}
+        allow="autoplay; fullscreen; encrypted-media; picture-in-picture; clipboard-write"
+        allowfullscreen
+        webkitallowfullscreen
+        mozallowfullscreen
+        referrerpolicy="strict-origin-when-cross-origin"
+        scrolling="no"
+        frameborder="0"
+      ></iframe>
+    </div>
+  )
 ) : (
   <div class="aparat-error">
     <p>کد ویدیو آپارات نامعتبر است.</p>
@@ -40,40 +62,71 @@ const aspectClass = aspect === '9:16' ? 'vertical' : 'horizontal';
   </div>
 )}
 
+<script is:inline>
+(function () {
+  // Convert any .aparat-thumb into a live iframe when clicked
+  document.addEventListener('click', function (e) {
+    var el = e.target.closest && e.target.closest('.aparat-thumb');
+    if (!el) return;
+    var hash = el.getAttribute('data-aparat-hash') || '';
+    var title = el.getAttribute('data-aparat-title') || '';
+    var autoplay = el.getAttribute('data-autoplay') === '1';
+    if (!hash) return;
+    var url = 'https://www.aparat.com/video/video/embed/videohash/' + hash + '/vt/frame'
+      + (autoplay ? '?autoplay=1' : '');
+    var iframe = document.createElement('iframe');
+    iframe.src = url;
+    iframe.title = title;
+    iframe.allow = 'autoplay; fullscreen; encrypted-media; picture-in-picture';
+    iframe.setAttribute('allowfullscreen', '');
+    iframe.setAttribute('webkitallowfullscreen', '');
+    iframe.setAttribute('mozallowfullscreen', '');
+    iframe.setAttribute('referrerpolicy', 'strict-origin-when-cross-origin');
+    iframe.setAttribute('frameborder', '0');
+    iframe.setAttribute('scrolling', 'no');
+    iframe.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;border:0;';
+    // replace content
+    el.innerHTML = '';
+    el.appendChild(iframe);
+    el.style.cursor = 'default';
+  });
+})();
+</script>
+
 <style>
-  .aparat-wrap {
-    position: relative;
-    width: 100%;
-    height: 0;
-    overflow: hidden;
-    border-radius: 16px;
-    background: #050508;
+  .aparat-wrap, .aparat-thumb {
+    position: relative; width: 100%; height: 0;
+    overflow: hidden; border-radius: 16px; background: #050508;
     margin: 1.5rem 0;
   }
-  .aparat-wrap.aspect-horizontal { padding-bottom: 56.25%; }
-  .aparat-wrap.aspect-vertical { padding-bottom: 177.78%; }
-
+  .aparat-wrap.aspect-horizontal, .aparat-thumb.aspect-horizontal { padding-bottom: 56.25%; }
+  .aparat-wrap.aspect-vertical, .aparat-thumb.aspect-vertical { padding-bottom: 177.78%; }
   .aparat-wrap iframe {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    border: 0;
-    display: block;
+    position: absolute; inset: 0; width: 100%; height: 100%; border: 0;
   }
-
+  .aparat-thumb { cursor: pointer; }
+  .aparat-thumb img {
+    position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
+  }
+  .aparat-thumb::after {
+    content: ""; position: absolute; inset: 0;
+    background: linear-gradient(180deg, transparent 40%, rgba(0,0,0,.35) 100%);
+    pointer-events: none;
+  }
+  .aparat-thumb__play {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+    width: 76px; height: 76px; border-radius: 50%;
+    background: linear-gradient(135deg, #F5A623, #DC8A0F);
+    display: grid; place-items: center; z-index: 3;
+    box-shadow: 0 16px 34px -12px rgba(245,166,35,.7), inset 0 2px 0 rgba(255,255,255,.35);
+    transition: transform .3s;
+  }
+  .aparat-thumb:hover .aparat-thumb__play { transform: translate(-50%,-50%) scale(1.07); }
+  .aparat-thumb__play svg { width: 26px; height: 26px; fill: #1A1A1A; margin-inline-start: 4px; }
   .aparat-error {
-    padding: 2rem;
-    text-align: center;
-    background: #1a1a22;
-    border: 1px dashed rgba(255,255,255,.2);
-    border-radius: 16px;
-    color: #aaa;
-    font-size: .9rem;
-    margin: 1.5rem 0;
+    padding: 2rem; text-align: center;
+    background: #F4F0E5; border: 1px dashed rgba(0,0,0,.14);
+    border-radius: 16px; color: #5A5A5A; font-size: .9rem; margin: 1.5rem 0;
   }
-  .aparat-error a {
-    color: #F5A623;
-    text-decoration: underline;
-  }
+  .aparat-error a { color: #B8700A; text-decoration: underline; }
 </style>
