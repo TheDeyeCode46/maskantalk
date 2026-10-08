@@ -15,15 +15,18 @@ export async function getStaticPaths() {
 const { article } = Astro.props;
 const { Content } = await render(article);
 
-const VIDEO_CATS = ['ویدیو', 'کوتاه'];
-const isReel = article.data.category === 'کوتاه';
+const normCat = (c) => String(c || '').replace(/[\u200b\u200c\u200d\ufeff]/g, '').trim();
+const cat = normCat(article.data.category);
+const isReel = cat === 'کوتاه';
+const isVideo = cat === 'ویدیو';
+const aspect = isReel ? '9:16' : '16:9';
 
 const allArticles = await getCollection('articles');
 const related = allArticles
   .filter(a => a.id !== article.id)
   .map(a => {
     const shared = a.data.tags.filter(t => article.data.tags.includes(t)).length;
-    const sameCat = a.data.category === article.data.category ? 1 : 0;
+    const sameCat = normCat(a.data.category) === cat ? 1 : 0;
     return { article: a, score: shared * 2 + sameCat };
   })
   .filter(x => x.score > 0)
@@ -31,9 +34,7 @@ const related = allArticles
   .slice(0, 3)
   .map(x => x.article);
 
-const aparatHash = article.data.aparatHash
-  ? extractAparatHash(article.data.aparatHash)
-  : null;
+const aparatHash = article.data.aparatHash ? extractAparatHash(article.data.aparatHash) : null;
 ---
 <BaseLayout title={article.data.title} description={article.data.description}>
   <section class="page-light">
@@ -42,7 +43,6 @@ const aparatHash = article.data.aparatHash
         <div class="single-head">
           <span class="single-cat">{article.data.category}</span>
           <h1>{article.data.title}</h1>
-          <p class="single-desc">{article.data.description}</p>
           <div class="single-meta">
             <span>{article.data.author}</span>
             <span>·</span>
@@ -56,9 +56,8 @@ const aparatHash = article.data.aparatHash
           <AparatEmbed
             hash={article.data.aparatHash!}
             title={article.data.title}
-            aspect={isReel ? '9:16' : '16:9'}
-            lazy={true}
-            poster={article.data.cover}
+            aspect={aspect}
+            autoplay={false}
           />
         )}
 
@@ -97,7 +96,6 @@ const aparatHash = article.data.aparatHash
                   <div class="related-body">
                     <span class="related-cat">{r.data.category}</span>
                     <h4>{r.data.title}</h4>
-                    <p>{r.data.description}</p>
                   </div>
                 </a>
               ))}
@@ -108,9 +106,3 @@ const aparatHash = article.data.aparatHash
     </div>
   </section>
 </BaseLayout>
-
-<style>
-  /* Reduce double padding between page-light and single */
-  .page-light { padding: 1.5rem 0 3rem; }
-  .single { padding: 0 1.25rem; }
-</style>

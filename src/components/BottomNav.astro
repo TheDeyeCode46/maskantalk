@@ -1,7 +1,13 @@
+---
+// Detect whether we're on the homepage
+const path = Astro.url.pathname;
+const isHome = path === '/' || path === '';
+const prefix = isHome ? '' : '/';
+---
 <nav class="bottom-nav" aria-label="ناوبری موبایل">
   <div class="bottom-inner">
 
-    <a href="/" class="bn-item" data-nav="home">
+    <a href={isHome ? '#top' : '/'} class="bn-item" data-nav="home">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
         <path d="M3 10.5L12 3l9 7.5"/>
         <path d="M5 10v10a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V10"/>
@@ -9,7 +15,7 @@
       <span>خانه</span>
     </a>
 
-    <a href="/videos/" class="bn-item" data-nav="videos">
+    <a href={`${prefix}#episodes`} class="bn-item" data-nav="episodes">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
         <rect x="2" y="4" width="20" height="16" rx="3"/>
         <path d="M10 9l5 3-5 3V9z"/>
@@ -17,14 +23,14 @@
       <span>ویدیوها</span>
     </a>
 
-    <a href="/reels/" class="bn-item" data-nav="reels">
+    <a href={`${prefix}#reels`} class="bn-item" data-nav="reels">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
         <path d="M13 2L3 14h7l-1 8 10-12h-7l1-8z"/>
       </svg>
       <span>کوتاه</span>
     </a>
 
-    <a href="/articles/" class="bn-item" data-nav="articles">
+    <a href={`${prefix}#articles`} class="bn-item" data-nav="articles">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
         <path d="M4 19.5V6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v13.5"/>
         <path d="M8 8h8M8 12h8M8 16h5"/>
@@ -41,11 +47,42 @@
   var path = window.location.pathname;
   var items = document.querySelectorAll('.bn-item');
   items.forEach(function(item){
-    var target = item.getAttribute('href');
+    var nav = item.getAttribute('data-nav');
     var active = false;
-    if (target === '/' && (path === '/' || path === '')) active = true;
-    else if (target !== '/' && path.indexOf(target) === 0) active = true;
+    if (nav === 'home' && (path === '/' || path === '')) active = true;
+    else if (nav === 'episodes' && path.indexOf('/videos') === 0) active = true;
+    else if (nav === 'reels' && path.indexOf('/reels') === 0) active = true;
+    else if (nav === 'articles' && path.indexOf('/news') === 0) active = true;
     item.classList.toggle('active', active);
   });
+
+  // On homepage, also do scroll-spy
+  if (path === '/' || path === '') {
+    var secs = ['top', 'episodes', 'reels', 'articles'];
+    var footerEl = document.querySelector('footer');
+    function update() {
+      var y = window.scrollY + 200;
+      var nearBottom = window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 100;
+      if (nearBottom) {
+        items.forEach(function(i){ i.classList.remove('active'); });
+        return;
+      }
+      var cur = 'top';
+      secs.forEach(function(id){
+        var el = document.getElementById(id);
+        if (el && el.offsetTop <= y) cur = id;
+      });
+      items.forEach(function(item){
+        var nav = item.getAttribute('data-nav');
+        var match = (nav === 'home' && cur === 'top')
+          || (nav === 'episodes' && cur === 'episodes')
+          || (nav === 'reels' && cur === 'reels')
+          || (nav === 'articles' && cur === 'articles');
+        item.classList.toggle('active', match);
+      });
+    }
+    window.addEventListener('scroll', update, { passive: true });
+    update();
+  }
 })();
 </script>

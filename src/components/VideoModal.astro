@@ -77,11 +77,14 @@
     var el = e.target.closest && e.target.closest('[data-video-open]');
     if (!el) return;
     e.preventDefault();
-    var hash = el.getAttribute('data-hash') || '';
-    var title = el.getAttribute('data-title') || '';
-    var articleId = el.getAttribute('data-article') || '';
-    var ig = el.getAttribute('data-instagram') || '';
-    openModal(hash, title, articleId, ig);
+    openModal(
+      el.getAttribute('data-hash') || '',
+      el.getAttribute('data-title') || '',
+      el.getAttribute('data-article') || '',
+      el.getAttribute('data-instagram') || ''
+    );
   });
+
+  window.__openVideoModal = openModal;
 })();
 </script>

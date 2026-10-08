@@ -3,6 +3,7 @@ import '../styles/global.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import BottomNav from '../components/BottomNav.astro';
+import VideoModal from '../components/VideoModal.astro';
 
 interface Props {
   title: string;
@@ -38,5 +39,25 @@ const { title, description = 'مسکن‌تاک', intro } = Astro.props;
 </main>
 <Footer />
 <BottomNav />
+<VideoModal />
+
+<script is:inline>
+(function(){
+  // Reveal observer — fixes blank footer newsletter on archive pages
+  if ('IntersectionObserver' in window) {
+    var obs = new IntersectionObserver(function(entries){
+      entries.forEach(function(en){
+        if (en.isIntersecting) {
+          en.target.classList.add('visible');
+          obs.unobserve(en.target);
+        }
+      });
+    }, { threshold: 0.06, rootMargin: '0px 0px -40px 0px' });
+    document.querySelectorAll('.reveal').forEach(function(el){ obs.observe(el); });
+  } else {
+    document.querySelectorAll('.reveal').forEach(function(el){ el.classList.add('visible'); });
+  }
+})();
+</script>
 </body>
 </html>

@@ -2,9 +2,11 @@
 import { getCollection } from 'astro:content';
 import ArchiveLayout from '../../layouts/ArchiveLayout.astro';
 
+const normCat = (c) => String(c || '').replace(/[\u200b\u200c\u200d\ufeff]/g, '').trim();
+
 const all = await getCollection('articles');
 const videos = all
-  .filter(a => a.data.category === 'ویدیو')
+  .filter(a => normCat(a.data.category) === 'ویدیو')
   .sort((a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf());
 
 const PAGE_SIZE = 12;
@@ -48,7 +50,7 @@ const lastPage = Math.max(1, Math.ceil(videos.length / PAGE_SIZE));
       {Array.from({ length: lastPage }, (_, i) => i + 1).map(n => (
         n === 1 ? <span class="current">{n}</span> : <a href={`/videos/page/${n}/`}>{n}</a>
       ))}
-      <a href="/videos/page/2/">بعدی</a>
+      {lastPage > 1 ? <a href="/videos/page/2/">بعدی</a> : <span class="disabled">بعدی</span>}
     </nav>
   )}
 </ArchiveLayout>

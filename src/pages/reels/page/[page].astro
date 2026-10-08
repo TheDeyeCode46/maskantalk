@@ -3,12 +3,14 @@ import { getCollection } from 'astro:content';
 import ArchiveLayout from '../../../layouts/ArchiveLayout.astro';
 import { extractAparatHash } from '../../../lib/aparat';
 
+const normCat = (c) => String(c || '').replace(/[\u200b\u200c\u200d\ufeff]/g, '').trim();
+
 export async function getStaticPaths() {
   const all = await getCollection('articles');
   const reels = all
-    .filter(a => a.data.category === 'کوتاه')
+    .filter(a => normCat(a.data.category) === 'کوتاه')
     .sort((a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf());
-  const PAGE_SIZE = 16;
+  const PAGE_SIZE = 20;
   const totalPages = Math.ceil(reels.length / PAGE_SIZE);
   const paths = [];
   for (let i = 2; i <= totalPages; i++) {
@@ -20,16 +22,16 @@ export async function getStaticPaths() {
 const { pageNum } = Astro.props;
 const all = await getCollection('articles');
 const reels = all
-  .filter(a => a.data.category === 'کوتاه')
+  .filter(a => normCat(a.data.category) === 'کوتاه')
   .sort((a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf());
-const PAGE_SIZE = 16;
+const PAGE_SIZE = 20;
 const data = reels.slice((pageNum - 1) * PAGE_SIZE, pageNum * PAGE_SIZE);
 const lastPage = Math.max(1, Math.ceil(reels.length / PAGE_SIZE));
 ---
 <ArchiveLayout title={`برش‌های کوتاه — صفحه ${pageNum}`}>
   <div class="reels-grid">
     {data.map(r => {
-      const hash = extractAparatHash(r.data.aparatHash);
+      const hash = r.data.aparatHash ? extractAparatHash(r.data.aparatHash) : null;
       return (
         <button
           type="button"

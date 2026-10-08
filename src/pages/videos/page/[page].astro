@@ -2,10 +2,12 @@
 import { getCollection } from 'astro:content';
 import ArchiveLayout from '../../../layouts/ArchiveLayout.astro';
 
+const normCat = (c) => String(c || '').replace(/[\u200b\u200c\u200d\ufeff]/g, '').trim();
+
 export async function getStaticPaths() {
   const all = await getCollection('articles');
   const videos = all
-    .filter(a => a.data.category === 'ویدیو')
+    .filter(a => normCat(a.data.category) === 'ویدیو')
     .sort((a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf());
   const PAGE_SIZE = 12;
   const totalPages = Math.ceil(videos.length / PAGE_SIZE);
@@ -19,16 +21,13 @@ export async function getStaticPaths() {
 const { pageNum } = Astro.props;
 const all = await getCollection('articles');
 const videos = all
-  .filter(a => a.data.category === 'ویدیو')
+  .filter(a => normCat(a.data.category) === 'ویدیو')
   .sort((a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf());
 const PAGE_SIZE = 12;
 const data = videos.slice((pageNum - 1) * PAGE_SIZE, pageNum * PAGE_SIZE);
 const lastPage = Math.max(1, Math.ceil(videos.length / PAGE_SIZE));
 ---
-<ArchiveLayout
-  title={`قسمت‌های مسکن‌تاک — صفحه ${pageNum}`}
-  intro="آرشیو کامل قسمت‌های برنامه مسکن‌تاک."
->
+<ArchiveLayout title={`قسمت‌های مسکن‌تاک — صفحه ${pageNum}`}>
   <div class="archive-grid">
     {data.map(v => (
       <a href={`/articles/${v.id}/`} class="archive-card">
