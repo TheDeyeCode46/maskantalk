@@ -2,8 +2,8 @@
 import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { extractAparatHash } from '../lib/aparat';
-import { normCat, toFa } from '../lib/categories'; // eslint-disable-line
-import { faDigits } from '../lib/format';
+import { normCat } from '../lib/categories';
+import { faDigits, toFa } from '../lib/format';
 
 const all = await getCollection('articles');
 const sorted = all.sort((a, b) =>
@@ -104,29 +104,105 @@ const newsList = articles.slice(1, 6);
         <div class="empty-state">هنوز ویدیویی منتشر نشده. از پنل مدیریت اضافه کنید.</div>
       ) : (
         <div class="bento">
-          {videos.slice(0, 9).map((v, i) => {
-            const colors = ['bc-amber', 'bc-indigo', 'bc-coral', 'bc-light', 'bc-amber-soft', 'bc-indigo-hi'];
-            const color = colors[i % colors.length];
-            return (
-              <a href={`/articles/${v.id}/`} class={`bento-card ${color} reveal`}>
+          {videos[0] && (
+            <a href={`/articles/${videos[0].id}/`} class="bento-card bc-amber reveal">
+              <div class="v-thumb">
+                {videos[0].data.cover ? <img src={videos[0].data.cover} alt="" loading="lazy" /> : <div class="ph-placeholder">تصویر</div>}
+                <div class="v-play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+                {videos[0].data.duration && <span class="v-time">{faDigits(videos[0].data.duration)}</span>}
+              </div>
+              <div class="bento-meta">
+                <span class="bento-tag">{videos[0].data.tags[0] ?? 'برنامه'}</span>
+                <h3 class="bento-title">{videos[0].data.title}</h3>
+                <div class="bento-foot"><span>{videos[0].data.author}</span><span>{toFa(videos[0].data.publishDate.toLocaleDateString('fa-IR'))}</span></div>
+              </div>
+            </a>
+          )}
+          {videos[1] && (
+            <a href={`/articles/${videos[1].id}/`} class="bento-card bc-indigo reveal">
+              <div class="v-thumb">
+                {videos[1].data.cover ? <img src={videos[1].data.cover} alt="" loading="lazy" /> : <div class="ph-placeholder">تصویر</div>}
+                <div class="v-play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+                {videos[1].data.duration && <span class="v-time">{faDigits(videos[1].data.duration)}</span>}
+              </div>
+              <div class="bento-meta">
+                <span class="bento-tag">{videos[1].data.tags[0] ?? 'برنامه'}</span>
+                <h3 class="bento-title">{videos[1].data.title}</h3>
+                <div class="bento-foot"><span>{videos[1].data.author}</span><span>{toFa(videos[1].data.publishDate.toLocaleDateString('fa-IR'))}</span></div>
+              </div>
+            </a>
+          )}
+          {videos[2] && (
+            <a href={`/articles/${videos[2].id}/`} class="bento-card bc-coral reveal">
+              <div class="v-thumb">
+                {videos[2].data.cover ? <img src={videos[2].data.cover} alt="" loading="lazy" /> : <div class="ph-placeholder">تصویر</div>}
+                <div class="v-play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+                {videos[2].data.duration && <span class="v-time">{faDigits(videos[2].data.duration)}</span>}
+              </div>
+              <div class="bento-meta">
+                <span class="bento-tag">{videos[2].data.tags[0] ?? 'برنامه'}</span>
+                <h3 class="bento-title">{videos[2].data.title}</h3>
+                <div class="bento-foot"><span>{videos[2].data.author}</span><span>{toFa(videos[2].data.publishDate.toLocaleDateString('fa-IR'))}</span></div>
+              </div>
+            </a>
+          )}
+
+          {videos[3] && (
+            <a href={`/articles/${videos[3].id}/`} class="bento-card bc-light reveal">
+              <div class="v-thumb">
+                {videos[3].data.cover ? <img src={videos[3].data.cover} alt="" loading="lazy" /> : <div class="ph-placeholder">تصویر</div>}
+                <div class="v-play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+                {videos[3].data.duration && <span class="v-time">{faDigits(videos[3].data.duration)}</span>}
+              </div>
+              <div class="bento-meta">
+                <span class="bento-tag">{videos[3].data.tags[0] ?? 'برنامه'}</span>
+                <h3 class="bento-title">{videos[3].data.title}</h3>
+                <div class="bento-foot"><span>{videos[3].data.author}</span><span>{toFa(videos[3].data.publishDate.toLocaleDateString('fa-IR'))}</span></div>
+              </div>
+            </a>
+          )}
+
+          <div class="split-stack">
+            {videos[4] && (
+              <a href={`/articles/${videos[4].id}/`} class="bento-card bc-amber-soft compact-h reveal">
                 <div class="v-thumb">
-                  {v.data.cover
-                    ? <img src={v.data.cover} alt="" loading="lazy" />
-                    : <div class="ph-placeholder">تصویر</div>}
-                  <div class="v-play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
-                  {v.data.duration && <span class="v-time">{faDigits(v.data.duration)}</span>}
+                  {videos[4].data.cover ? <img src={videos[4].data.cover} alt="" loading="lazy" /> : <div class="ph-placeholder">تصویر</div>}
+                  <div class="v-play" style="width:30px;height:30px;"><svg viewBox="0 0 24 24" style="width:11px;height:11px;"><path d="M8 5v14l11-7z"/></svg></div>
                 </div>
                 <div class="bento-meta">
-                  <span class="bento-tag">{v.data.tags[0] ?? 'برنامه'}</span>
-                  <h3 class="bento-title">{v.data.title}</h3>
-                  <div class="bento-foot">
-                    <span>{v.data.author}</span>
-                    <span>{toFa(v.data.publishDate.toLocaleDateString('fa-IR'))}</span>
-                  </div>
+                  <span class="bento-tag">{videos[4].data.tags[0] ?? 'کوتاه'}</span>
+                  <h4 class="bento-title">{videos[4].data.title}</h4>
                 </div>
               </a>
-            );
-          })}
+            )}
+            {videos[5] && (
+              <a href={`/articles/${videos[5].id}/`} class="bento-card bc-indigo-hi compact-h reveal">
+                <div class="v-thumb">
+                  {videos[5].data.cover ? <img src={videos[5].data.cover} alt="" loading="lazy" /> : <div class="ph-placeholder">تصویر</div>}
+                  <div class="v-play" style="width:30px;height:30px;"><svg viewBox="0 0 24 24" style="width:11px;height:11px;"><path d="M8 5v14l11-7z"/></svg></div>
+                </div>
+                <div class="bento-meta">
+                  <span class="bento-tag">{videos[5].data.tags[0] ?? 'ویژه'}</span>
+                  <h4 class="bento-title">{videos[5].data.title}</h4>
+                </div>
+              </a>
+            )}
+          </div>
+
+          {videos[6] && (
+            <a href={`/articles/${videos[6].id}/`} class="bento-card bc-indigo reveal">
+              <div class="v-thumb">
+                {videos[6].data.cover ? <img src={videos[6].data.cover} alt="" loading="lazy" /> : <div class="ph-placeholder">تصویر</div>}
+                <div class="v-play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+                {videos[6].data.duration && <span class="v-time">{faDigits(videos[6].data.duration)}</span>}
+              </div>
+              <div class="bento-meta">
+                <span class="bento-tag">{videos[6].data.tags[0] ?? 'برنامه'}</span>
+                <h3 class="bento-title">{videos[6].data.title}</h3>
+                <div class="bento-foot"><span>{videos[6].data.author}</span><span>{toFa(videos[6].data.publishDate.toLocaleDateString('fa-IR'))}</span></div>
+              </div>
+            </a>
+          )}
         </div>
       )}
     </div>
