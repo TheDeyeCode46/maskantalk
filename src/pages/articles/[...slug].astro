@@ -1,7 +1,7 @@
 ---
 import { getCollection, render } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import AparatEmbed from '../../components/AparatEmbed.astro';
+import VideoPlayer from '../../components/VideoPlayer.astro';
 import { extractAparatHash } from '../../lib/aparat';
 import { normCat } from '../../lib/categories';
 import { formatDuration, toFa } from '../../lib/format';
@@ -36,6 +36,7 @@ const related = allArticles
 
 const aparatHash = article.data.aparatHash ? extractAparatHash(article.data.aparatHash) : null;
 const durationFa = formatDuration(article.data.duration);
+const hasMedia = !!(article.data.videoFile || article.data.videoUrl || aparatHash);
 ---
 <BaseLayout title={article.data.title} description={article.data.description}>
   <section class="page-light">
@@ -44,33 +45,49 @@ const durationFa = formatDuration(article.data.duration);
         <div class="single-head">
           <span class="single-cat">{article.data.category}</span>
           <h1>{article.data.title}</h1>
-          <div class="single-meta">
-            <span>{article.data.author}</span>
-            <span>·</span>
-            <span>{toFa(article.data.publishDate.toLocaleDateString('fa-IR'))}</span>
-            {article.data.episode && <><span>·</span><span>قسمت {toFa(article.data.episode)}</span></>}
+
+          <div class="article-meta">
+            <span class="am-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a8 8 0 0 1 16 0v1"/></svg>
+              {article.data.author}
+            </span>
+            <span class="am-sep">·</span>
+            <span class="am-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+              {toFa(article.data.publishDate.toLocaleDateString('fa-IR'))}
+            </span>
+            {article.data.episode && (
+              <>
+                <span class="am-sep">·</span>
+                <span class="am-item am-episode">قسمت {toFa(article.data.episode)}</span>
+              </>
+            )}
+            {durationFa && (
+              <>
+                <span class="am-sep">·</span>
+                <span class="am-item am-duration">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                  {durationFa}
+                </span>
+              </>
+            )}
           </div>
-          {durationFa && (
-            <div class="program-duration" style="margin-top:.75rem;">
-              <strong>طول برنامه:</strong> <span>{durationFa}</span>
-            </div>
-          )}
         </div>
 
-        {aparatHash && (
-          <AparatEmbed
-            hash={article.data.aparatHash!}
+        {hasMedia ? (
+          <VideoPlayer
+            videoFile={article.data.videoFile}
+            videoUrl={article.data.videoUrl}
+            aparatHash={article.data.aparatHash}
             title={article.data.title}
             aspect={aspect}
-            autoplay={false}
+            poster={article.data.cover}
           />
-        )}
-
-        {!aparatHash && article.data.cover && (
+        ) : article.data.cover ? (
           <div class="single-cover">
             <img src={article.data.cover} alt={article.data.title} />
           </div>
-        )}
+        ) : null}
 
         {article.data.instagramUrl && (
           <div style="margin:1rem 0 1.5rem;">
