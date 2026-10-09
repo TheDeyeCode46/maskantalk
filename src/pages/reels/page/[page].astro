@@ -36,6 +36,8 @@ const lastPage = Math.max(1, Math.ceil(reels.length / PAGE_SIZE));
           type="button"
           class="reel-tile"
           data-video-open
+          data-file={r.data.videoFile ?? ''}
+          data-url={r.data.videoUrl ?? ''}
           data-hash={hash ?? ''}
           data-title={r.data.title}
           data-article={r.id}
