@@ -35,17 +35,18 @@ collections:
           - { label: "📊 داده", value: "داده" }
         default: "خبر"
 
-      # ---------- VIDEO SOURCES (pick ONE — priority: file > url > aparat) ----------
       - name: videoFile
         label: آپلود ویدیو (فقط برای فایل‌های زیر ۲۵ مگابایت)
         widget: file
         required: false
         hint: "برای ریلزهای کوتاه. فایل مستقیم در سایت میزبانی می‌شود."
+
       - name: videoUrl
         label: لینک ویدیو (R2 یا سرور دیگر)
         widget: string
         required: false
         hint: "برای فایل‌های بزرگ. مثلا https://pub-xxxxx.r2.dev/my-reel.mp4"
+
       - name: aparatHash
         label: کد یا لینک آپارات (اختیاری)
         widget: string
