@@ -2,8 +2,6 @@
 const path = Astro.url.pathname;
 const isHome = path === '/' || path === '';
 
-// On homepage: smooth-scroll to sections.
-// Elsewhere: navigate to the archive page.
 const linkEpisodes = isHome ? '#episodes' : '/videos/';
 const linkReels    = isHome ? '#reels'    : '/reels/';
 const linkArticles = isHome ? '#articles' : '/news/';
@@ -17,7 +15,7 @@ const activeHome     = isHome && !activeEpisodes && !activeReels && !activeArtic
   <div class="bottom-inner">
 
     <a href="/" class={`bn-item${activeHome ? ' active' : ''}`} data-nav="home" aria-label="خانه">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
         <path d="M3 10.5L12 3l9 7.5"/>
         <path d="M5 10v10a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V10"/>
       </svg>
@@ -25,7 +23,7 @@ const activeHome     = isHome && !activeEpisodes && !activeReels && !activeArtic
     </a>
 
     <a href={linkEpisodes} class={`bn-item${activeEpisodes ? ' active' : ''}`} data-nav="episodes" aria-label="ویدیوها">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
         <rect x="2" y="4" width="20" height="16" rx="3"/>
         <path d="M10 9l5 3-5 3V9z"/>
       </svg>
@@ -33,14 +31,14 @@ const activeHome     = isHome && !activeEpisodes && !activeReels && !activeArtic
     </a>
 
     <a href={linkReels} class={`bn-item${activeReels ? ' active' : ''}`} data-nav="reels" aria-label="کوتاه">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
         <path d="M13 2L3 14h7l-1 8 10-12h-7l1-8z"/>
       </svg>
       <span>کوتاه</span>
     </a>
 
     <a href={linkArticles} class={`bn-item${activeArticles ? ' active' : ''}`} data-nav="articles" aria-label="مقالات">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
         <path d="M4 19.5V6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v13.5"/>
         <path d="M8 8h8M8 12h8M8 16h5"/>
       </svg>
@@ -53,7 +51,6 @@ const activeHome     = isHome && !activeEpisodes && !activeReels && !activeArtic
 <script is:inline>
 (function(){
   'use strict';
-  // Only run scroll-spy on the homepage (where links are #anchors)
   var path = window.location.pathname;
   if (path !== '/' && path !== '') return;
 
