@@ -2,8 +2,7 @@
 import { getCollection } from 'astro:content';
 import ArchiveLayout from '../../layouts/ArchiveLayout.astro';
 import { extractAparatHash } from '../../lib/aparat';
-
-const normCat = (c) => String(c || '').replace(/[\u200b\u200c\u200d\ufeff]/g, '').trim();
+import { normCat } from '../../lib/categories';
 
 const all = await getCollection('articles');
 const reels = all
@@ -17,7 +16,7 @@ const lastPage = Math.max(1, Math.ceil(reels.length / PAGE_SIZE));
 <ArchiveLayout
   title="برش‌های کوتاه"
   description="ویدیوهای کوتاه و ریلز مسکن‌تاک"
-  intro="کلیپ‌های کوتاه و ریلزهای مسکن‌تاک — روی هر کارت بزنید تا پخش شود."
+  intro="کلیپ‌های کوتاه مسکن‌تاک — روی هر کارت بزنید تا پخش شود."
 >
   {data.length === 0 ? (
     <div class="empty-state">هنوز کلیپ کوتاهی منتشر نشده.</div>
@@ -30,6 +29,8 @@ const lastPage = Math.max(1, Math.ceil(reels.length / PAGE_SIZE));
             type="button"
             class="reel-tile"
             data-video-open
+            data-file={r.data.videoFile ?? ''}
+            data-url={r.data.videoUrl ?? ''}
             data-hash={hash ?? ''}
             data-title={r.data.title}
             data-article={r.id}
@@ -40,7 +41,7 @@ const lastPage = Math.max(1, Math.ceil(reels.length / PAGE_SIZE));
             <span class="reel-play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span>
             <div class="body">
               <h4>{r.data.title}</h4>
-              <span>{r.data.duration ?? ''}{r.data.duration ? ' · ' : ''}{r.data.publishDate.toLocaleDateString('fa-IR')}</span>
+              <span>{r.data.duration ?? ''}</span>
             </div>
           </button>
         );
