@@ -239,6 +239,8 @@ const newsList = articles.slice(1, 6);
                   type="button"
                   class="reel"
                   data-video-open
+                  data-file={r.data.videoFile ?? ''}
+                  data-url={r.data.videoUrl ?? ''}
                   data-hash={hash ?? ''}
                   data-title={r.data.title}
                   data-article={r.id}
