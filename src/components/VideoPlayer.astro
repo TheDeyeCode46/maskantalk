@@ -1,0 +1,81 @@
+---
+import AparatEmbed from './AparatEmbed.astro';
+
+interface Props {
+  videoFile?: string;
+  videoUrl?: string;
+  aparatHash?: string;
+  title?: string;
+  aspect?: '16:9' | '9:16';
+  poster?: string;
+  controls?: boolean;
+  autoplay?: boolean;
+}
+const {
+  videoFile,
+  videoUrl,
+  aparatHash,
+  title = 'ویدیو',
+  aspect = '16:9',
+  poster,
+  controls = true,
+  autoplay = false,
+} = Astro.props;
+
+const src = videoFile || videoUrl || null;
+const aspectKey = aspect === '9:16' ? 'aspect-vertical' : 'aspect-horizontal';
+---
+{src ? (
+  <div class={`media-wrap ${aspectKey}`}>
+    <video
+      src={src}
+      controls={controls}
+      playsinline
+      preload="metadata"
+      poster={poster || undefined}
+      autoplay={autoplay}
+      muted={autoplay}
+    >
+      مرورگر شما از پخش ویدیو پشتیبانی نمی‌کند.
+    </video>
+  </div>
+) : aparatHash ? (
+  <AparatEmbed hash={aparatHash} title={title} aspect={aspect} autoplay={autoplay} />
+) : (
+  <div class="aparat-error">
+    <p>ویدیویی برای این آیتم ثبت نشده است.</p>
+  </div>
+)}
+
+<style>
+  .media-wrap {
+    position: relative;
+    width: 100%;
+    height: 0;
+    overflow: hidden;
+    border-radius: 16px;
+    background: #050508;
+    margin: 1.5rem 0;
+  }
+  .media-wrap.aspect-horizontal { padding-bottom: 56.25%; }
+  .media-wrap.aspect-vertical { padding-bottom: 177.78%; }
+  .media-wrap video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    background: #000;
+    border: 0;
+  }
+  .aparat-error {
+    padding: 2rem;
+    text-align: center;
+    background: #F4F0E5;
+    border: 1px dashed rgba(0,0,0,.14);
+    border-radius: 16px;
+    color: #5A5A5A;
+    font-size: .9rem;
+    margin: 1.5rem 0;
+  }
+</style>
