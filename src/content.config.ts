@@ -1,13 +1,10 @@
 import { defineCollection, z } from 'astro:content';
 import { glob } from 'astro/loaders';
 
-// Tolerant integer: accepts number, numeric string, empty object, null, undefined
 const optionalInt = z.preprocess(
   (val) => {
     if (val === null || val === undefined) return undefined;
-    if (typeof val === 'number') {
-      return Number.isFinite(val) ? Math.trunc(val) : undefined;
-    }
+    if (typeof val === 'number') return Number.isFinite(val) ? Math.trunc(val) : undefined;
     if (typeof val === 'string') {
       const s = val.trim();
       if (s === '') return undefined;
@@ -37,12 +34,14 @@ const articles = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './src/content/articles' }),
   schema: z.object({
     title: z.string(),
-    description: z.string(),
+    description: z.string().default(''),
     publishDate: z.coerce.date(),
     cover: z.string().optional(),
     category: z.string().default('خبر'),
     tags: z.array(z.string()).default([]),
     aparatHash: z.string().optional(),
+    videoFile: z.string().optional(),
+    videoUrl: z.string().optional(),
     instagramUrl: z.string().optional(),
     duration: z.string().optional(),
     episode: optionalInt,
