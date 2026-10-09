@@ -2429,6 +2429,7 @@ ul, ol { list-style: none; }
   * { animation: none !important; transition: none !important; }
   .reveal { opacity: 1 !important; transform: none !important; }
 }
+
 /* ============================================================
    MESKAN TALK — GLOBAL STYLES
    ============================================================ */
@@ -2560,9 +2561,7 @@ ul, ol { list-style: none; }
 .reveal { opacity: 0; transform: translateY(20px); transition: opacity .6s var(--ease), transform .6s var(--ease); }
 .reveal.visible { opacity: 1; transform: translateY(0); }
 
-/* ============================================================
-   HEADER
-   ============================================================ */
+/* HEADER */
 .site-header {
   position: sticky; top: 0; z-index: 100;
   background: rgba(10,11,16,.92);
@@ -2613,9 +2612,7 @@ ul, ol { list-style: none; }
   stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; flex: none;
 }
 
-/* ============================================================
-   BOTTOM NAV — narrow pill, iOS-safe
-   ============================================================ */
+/* BOTTOM NAV — narrow pill, iOS-safe */
 .bottom-nav { display: none; }
 
 @media (max-width: 900px) {
@@ -2629,8 +2626,6 @@ ul, ol { list-style: none; }
     z-index: 200;
     padding: 0 14px max(10px, env(safe-area-inset-bottom, 10px));
     pointer-events: none;
-    /* No visual style on the outer element — this avoids the
-       iOS "glassy rectangle" compositing artifact */
     background: transparent;
     border: 0;
   }
@@ -2695,7 +2690,6 @@ ul, ol { list-style: none; }
   }
   .bn-item:active { transform: scale(.95); }
 
-  /* Active: narrow top indicator + colored icon, no wide background */
   .bn-item.active { color: var(--brand); }
   .bn-item.active svg {
     stroke-width: 2.3;
@@ -2715,9 +2709,7 @@ ul, ol { list-style: none; }
   }
 }
 
-/* ============================================================
-   HERO
-   ============================================================ */
+/* HERO */
 .hero { padding: 1rem 0 1.5rem; }
 .hero-card {
   display: grid;
@@ -2857,9 +2849,7 @@ ul, ol { list-style: none; }
 }
 .hero-cta-ghost:hover { border-color: var(--accent); background: rgba(232,76,61,.12); transform: translateY(-2px); }
 
-/* ============================================================
-   SECTIONS
-   ============================================================ */
+/* SECTIONS */
 .section { padding: 2.75rem 0; }
 .section-head {
   display: flex; align-items: flex-end; justify-content: space-between;
@@ -2885,9 +2875,7 @@ ul, ol { list-style: none; }
   font-size: .92rem;
 }
 
-/* ============================================================
-   BENTO
-   ============================================================ */
+/* BENTO */
 .bento {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -3008,9 +2996,7 @@ ul, ol { list-style: none; }
 }
 .ph-placeholder.full { position: absolute; inset: 0; }
 
-/* ============================================================
-   REELS CAROUSEL
-   ============================================================ */
+/* REELS CAROUSEL */
 .reels-panel {
   background: linear-gradient(180deg, var(--bg-2), #0D0E14);
   border: 1px solid var(--line-2);
@@ -3074,9 +3060,7 @@ ul, ol { list-style: none; }
 .reel-arrows button:hover { background: var(--brand); border-color: var(--brand); }
 .reel-arrows svg { width: 14px; height: 14px; stroke: currentColor; stroke-width: 2.2; fill: none; }
 
-/* ============================================================
-   NEWS / ARTICLES
-   ============================================================ */
+/* NEWS / ARTICLES */
 .news-grid {
   display: grid;
   grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr);
@@ -3135,9 +3119,7 @@ ul, ol { list-style: none; }
 .cat-coral { color: var(--accent); }
 .cat-light { color: #C9CCE8; }
 
-/* ============================================================
-   FOOTER
-   ============================================================ */
+/* FOOTER */
 .site-footer {
   position: relative; padding: 2.5rem 0 1.5rem;
   margin-top: 2rem;
@@ -3216,9 +3198,7 @@ ul, ol { list-style: none; }
 .made-with { display: inline-flex; align-items: center; gap: .3rem; }
 .made-with .heart { color: var(--accent); }
 
-/* ============================================================
-   LIGHT / CREAM MIDDLE
-   ============================================================ */
+/* LIGHT / CREAM MIDDLE */
 .page-light {
   background: var(--cream);
   color: var(--ink);
@@ -3347,9 +3327,7 @@ ul, ol { list-style: none; }
 .pagination .current { background: var(--brand-3); border-color: var(--brand-3); color: #FFFFFF; }
 .pagination .disabled { opacity: .35; pointer-events: none; }
 
-/* ============================================================
-   ARTICLE DETAIL
-   ============================================================ */
+/* ARTICLE DETAIL */
 .single { max-width: 780px; margin: 0 auto; padding: 1.5rem 1.25rem 4rem; }
 .single-head { margin-bottom: 1.75rem; }
 .single-cat {
@@ -3366,7 +3344,6 @@ ul, ol { list-style: none; }
 .single-cover { margin: 1.5rem 0; border-radius: 16px; overflow: hidden; }
 .single-cover img { width: 100%; display: block; }
 
-/* ===== The one-line article meta ===== */
 .article-meta {
   display: flex;
   align-items: center;
@@ -3452,9 +3429,7 @@ ul, ol { list-style: none; }
   display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
 }
 
-/* ============================================================
-   APARAT EMBED / VIDEO
-   ============================================================ */
+/* APARAT / MEDIA */
 .aparat-wrap, .aparat-thumb, .media-wrap {
   position: relative; width: 100%; height: 0;
   overflow: hidden; border-radius: 16px; background: #050508;
@@ -3489,9 +3464,7 @@ ul, ol { list-style: none; }
   object-fit: contain; background: #000; border: 0;
 }
 
-/* ============================================================
-   VIDEO MODAL
-   ============================================================ */
+/* VIDEO MODAL */
 .video-modal {
   position: fixed; inset: 0; z-index: 999;
   display: flex; align-items: center; justify-content: center;
@@ -3534,9 +3507,7 @@ ul, ol { list-style: none; }
 .video-modal-article-link { color: var(--brand); font-size: .82rem; font-weight: 700; white-space: nowrap; }
 .video-modal-article-link:hover { text-decoration: underline; }
 
-/* ============================================================
-   TABLET
-   ============================================================ */
+/* TABLET */
 @media (max-width: 1080px) {
   .hero-card { grid-template-columns: 1fr; min-height: auto; }
   .hero-visual { aspect-ratio: 16/9; min-height: 240px; }
@@ -3552,9 +3523,7 @@ ul, ol { list-style: none; }
   .related-grid { grid-template-columns: repeat(2, 1fr); }
 }
 
-/* ============================================================
-   MOBILE
-   ============================================================ */
+/* MOBILE */
 @media (max-width: 900px) {
   :root { --header-h: 60px; --gap: .75rem; }
 
