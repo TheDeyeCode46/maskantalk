@@ -3,10 +3,6 @@
   <div class="video-modal-inner">
     <button class="video-modal-close" data-close aria-label="بستن">×</button>
     <div class="video-modal-frame" id="videoModalFrame"></div>
-    <div class="video-modal-foot">
-      <h3 id="videoModalTitle">—</h3>
-      <a id="videoModalArticle" href="#" class="video-modal-article-link">صفحه کامل ↗</a>
-    </div>
   </div>
 </div>
 
@@ -15,8 +11,6 @@
   'use strict';
   var modal = document.getElementById('videoModal');
   var frame = document.getElementById('videoModalFrame');
-  var titleEl = document.getElementById('videoModalTitle');
-  var linkEl = document.getElementById('videoModalArticle');
   if (!modal) return;
 
   function buildAparatUrl(hash, autoplay) {
@@ -32,20 +26,15 @@
     var fileUrl = data.file || data.url;
 
     if (fileUrl) {
-      var vwrap = document.createElement('div');
-      vwrap.style.cssText = 'position:relative;padding-bottom:177.78%;height:0;border-radius:20px 20px 0 0;overflow:hidden;background:#000;margin:0;';
       var video = document.createElement('video');
       video.src = fileUrl;
       video.controls = true;
       video.playsInline = true;
       video.autoplay = true;
       video.setAttribute('playsinline', '');
-      video.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#000;';
-      vwrap.appendChild(video);
-      frame.appendChild(vwrap);
+      video.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#000;border:0;';
+      frame.appendChild(video);
     } else if (data.hash) {
-      var wrap = document.createElement('div');
-      wrap.style.cssText = 'position:relative;padding-bottom:177.78%;height:0;border-radius:20px 20px 0 0;overflow:hidden;background:#050508;margin:0;';
       var iframe = document.createElement('iframe');
       iframe.src = buildAparatUrl(data.hash, true);
       iframe.title = data.title || 'ویدیو';
@@ -57,28 +46,20 @@
       iframe.setAttribute('frameborder','0');
       iframe.setAttribute('scrolling','no');
       iframe.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;border:0;';
-      wrap.appendChild(iframe);
-      frame.appendChild(wrap);
+      frame.appendChild(iframe);
     } else if (data.instagram) {
       var box = document.createElement('div');
-      box.style.cssText = 'padding:3rem 1.5rem;text-align:center;color:#aaa;';
+      box.style.cssText = 'padding:3rem 1.5rem;text-align:center;color:#aaa;position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;';
       box.innerHTML = '<p style="margin:0 0 1rem;font-size:.9rem;">این کلیپ در اینستاگرام قابل مشاهده است.</p>'
         + '<a href="' + data.instagram + '" target="_blank" rel="noopener" style="display:inline-block;padding:.7rem 1.3rem;background:linear-gradient(135deg,#E84C3D,#C73B2D);color:#fff;font-weight:700;border-radius:12px;text-decoration:none;">مشاهده در اینستاگرام ↗</a>';
       frame.appendChild(box);
     } else {
       var err = document.createElement('div');
-      err.style.cssText = 'padding:3rem 1.5rem;text-align:center;color:#aaa;';
+      err.style.cssText = 'padding:3rem 1.5rem;text-align:center;color:#aaa;position:absolute;inset:0;display:flex;align-items:center;justify-content:center;';
       err.textContent = 'ویدیویی برای این آیتم ثبت نشده.';
       frame.appendChild(err);
     }
 
-    titleEl.textContent = data.title || '';
-    if (data.article) {
-      linkEl.href = '/articles/' + data.article + '/';
-      linkEl.style.display = '';
-    } else {
-      linkEl.style.display = 'none';
-    }
     modal.hidden = false;
     document.body.style.overflow = 'hidden';
   }
