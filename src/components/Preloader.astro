@@ -1,0 +1,104 @@
+---
+// Preloader — shows a 1-100% counter on the homepage first visit per session
+---
+<div id="preloader" class="preloader">
+  <div class="preloader-inner">
+    <div class="preloader-percent" id="preloaderPercent">۱٪</div>
+    <div class="preloader-brand">مسکن‌تاک</div>
+    <div class="preloader-bar"><span id="preloaderBar"></span></div>
+  </div>
+</div>
+
+<script is:inline>
+(function(){
+  'use strict';
+
+  var KEY = 'maskantalk-preloader-shown';
+
+  // Bail out early if we already showed it this session
+  try {
+    if (sessionStorage.getItem(KEY) === '1') return;
+  } catch (e) { /* ignore */ }
+
+  var el = document.getElementById('preloader');
+  var percentEl = document.getElementById('preloaderPercent');
+  var barEl = document.getElementById('preloaderBar');
+  if (!el || !percentEl || !barEl) return;
+
+  document.documentElement.classList.add('preloading');
+  document.body.style.overflow = 'hidden';
+
+  var FA = ['۰','۱','۲','۳','۴','۵','۶','۷','۸','۹'];
+  function toFa(n){
+    return String(n).replace(/\d/g, function(d){ return FA[Number(d)]; });
+  }
+
+  var progress = 0;
+  var tickTimer = null;
+  var started = false;
+
+  function setProgress(p){
+    var v = Math.max(1, Math.min(100, Math.round(p)));
+    progress = v;
+    percentEl.textContent = toFa(v) + '٪';
+    barEl.style.width = v + '%';
+    if (v >= 100) finish();
+  }
+
+  function finish(){
+    if (tickTimer) clearInterval(tickTimer);
+    tickTimer = null;
+    el.classList.add('is-done');
+    document.documentElement.classList.remove('preloading');
+    document.body.style.overflow = '';
+    try { sessionStorage.setItem(KEY, '1'); } catch (e) {}
+    setTimeout(function(){ el.style.display = 'none'; }, 700);
+  }
+
+  function start(){
+    if (started) return;
+    started = true;
+
+    var startAt = performance.now();
+    var MIN_MS = 1400;   // minimum show time
+    var MAX_MS = 3200;   // hard cap
+
+    tickTimer = setInterval(function(){
+      var elapsed = performance.now() - startAt;
+
+      if (elapsed >= MAX_MS) {
+        setProgress(100);
+        return;
+      }
+
+      var t = Math.min(1, elapsed / MIN_MS);
+      // Ease-out cubic
+      var eased = 1 - Math.pow(1 - t, 2.2);
+      var target = eased * 100;
+
+      if (elapsed >= MIN_MS) {
+        if (document.readyState === 'complete') {
+          setProgress(100);
+        } else {
+          // Hold near the top until the page is truly ready
+          setProgress(99);
+        }
+        return;
+      }
+
+      setProgress(target);
+    }, 40);
+  }
+
+  // Start when the page is ready (or 300ms from now, whichever is later)
+  if (document.readyState === 'complete') {
+    start();
+  } else {
+    window.addEventListener('load', start, { once: true });
+    setTimeout(function(){ if (!started) start(); }, 300);
+  }
+
+  // Absolute safety
+  setTimeout(function(){ if (progress < 100) setProgress(100); }, 4500);
+})();
+</script>
