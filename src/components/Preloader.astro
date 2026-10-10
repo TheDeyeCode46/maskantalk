@@ -1,5 +1,4 @@
 ---
-// Preloader — shows a 1-100% counter on the homepage first visit per session
 ---
 <div id="preloader" class="preloader">
   <div class="preloader-inner">
@@ -14,11 +13,9 @@
   'use strict';
 
   var KEY = 'maskantalk-preloader-shown';
-
-  // Bail out early if we already showed it this session
   try {
     if (sessionStorage.getItem(KEY) === '1') return;
-  } catch (e) { /* ignore */ }
+  } catch (e) {}
 
   var el = document.getElementById('preloader');
   var percentEl = document.getElementById('preloaderPercent');
@@ -33,72 +30,47 @@
     return String(n).replace(/\d/g, function(d){ return FA[Number(d)]; });
   }
 
-  var progress = 0;
+  var current = 1;
+  var finished = false;
   var tickTimer = null;
-  var started = false;
 
-  function setProgress(p){
-    var v = Math.max(1, Math.min(100, Math.round(p)));
-    progress = v;
+  function render(v){
+    current = v;
     percentEl.textContent = toFa(v) + '٪';
     barEl.style.width = v + '%';
-    if (v >= 100) finish();
   }
 
   function finish(){
+    if (finished) return;
+    finished = true;
     if (tickTimer) clearInterval(tickTimer);
-    tickTimer = null;
     el.classList.add('is-done');
     document.documentElement.classList.remove('preloading');
     document.body.style.overflow = '';
     try { sessionStorage.setItem(KEY, '1'); } catch (e) {}
-    setTimeout(function(){ el.style.display = 'none'; }, 700);
+    setTimeout(function(){ el.style.display = 'none'; }, 600);
   }
 
-  function start(){
-    if (started) return;
-    started = true;
+  render(1);
 
-    var startAt = performance.now();
-    var MIN_MS = 1400;   // minimum show time
-    var MAX_MS = 3200;   // hard cap
+  // Everything is already loaded — we just play the show.
+  // SMOOTH, DETERMINISTIC, always takes DURATION ms.
+  var DURATION = 2200; // milliseconds — the whole countdown
+  var FPS = 25;
+  var stepMs = 1000 / FPS;
+  var startAt = performance.now();
 
-    tickTimer = setInterval(function(){
-      var elapsed = performance.now() - startAt;
+  tickTimer = setInterval(function(){
+    var elapsed = performance.now() - startAt;
+    var t = Math.min(1, elapsed / DURATION);
 
-      if (elapsed >= MAX_MS) {
-        setProgress(100);
-        return;
-      }
+    // Ease-out so it starts slower and rushes at the end
+    var eased = 1 - Math.pow(1 - t, 1.6);
+    var target = Math.max(1, Math.round(eased * 100));
 
-      var t = Math.min(1, elapsed / MIN_MS);
-      // Ease-out cubic
-      var eased = 1 - Math.pow(1 - t, 2.2);
-      var target = eased * 100;
+    if (target !== current) render(target);
 
-      if (elapsed >= MIN_MS) {
-        if (document.readyState === 'complete') {
-          setProgress(100);
-        } else {
-          // Hold near the top until the page is truly ready
-          setProgress(99);
-        }
-        return;
-      }
-
-      setProgress(target);
-    }, 40);
-  }
-
-  // Start when the page is ready (or 300ms from now, whichever is later)
-  if (document.readyState === 'complete') {
-    start();
-  } else {
-    window.addEventListener('load', start, { once: true });
-    setTimeout(function(){ if (!started) start(); }, 300);
-  }
-
-  // Absolute safety
-  setTimeout(function(){ if (progress < 100) setProgress(100); }, 4500);
+    if (t >= 1) finish();
+  }, stepMs);
 })();
 </script>
