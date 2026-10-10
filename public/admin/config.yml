@@ -10,53 +10,126 @@ public_folder: /uploads
 locale: fa
 
 collections:
-  - name: articles
-    label: محتوا
-    label_singular: آیتم
+  # ⭐ HERO — items marked as featured
+  - name: hero
+    label: ⭐ هیرو (نمایش در بالای صفحه اصلی)
+    label_singular: آیتم هیرو
     folder: src/content/articles
     create: true
     slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
     summary: "{{category}} · {{title}}"
-    sortable_fields: ['publishDate', 'title', 'category']
+    filter:
+      field: featured
+      value: true
     fields:
       - { name: title, label: عنوان, widget: string }
       - { name: description, label: توضیح کوتاه, widget: text, required: false, default: "" }
       - { name: publishDate, label: تاریخ انتشار, widget: datetime, date_format: "YYYY-MM-DD", time_format: false, format: "YYYY-MM-DD" }
-      - { name: cover, label: تصویر شاخص / تامبنیل, widget: image, required: false, hint: "برنامه: ۱۹۲۰×۱۰۸۰ — ریلز: ۱۰۸۰×۱۹۲۰ — مقاله: ۱۶۰۰×۹۰۰" }
+      - { name: cover, label: تصویر شاخص, widget: image, required: false, hint: "۱۹۲۰×۱۰۸۰ یا ۱۶۰۰×۹۰۰" }
       - name: category
         label: نوع محتوا
         widget: select
         options:
-          - { label: "🎬 قسمت برنامه (ویدیو)", value: "ویدیو" }
-          - { label: "⚡ ویدیو کوتاه (ریلز)", value: "کوتاه" }
+          - { label: "🎬 قسمت برنامه", value: "ویدیو" }
+          - { label: "⚡ ویدیو کوتاه", value: "کوتاه" }
           - { label: "📰 خبر", value: "خبر" }
           - { label: "🔍 تحلیل", value: "تحلیل" }
           - { label: "✍️ یادداشت", value: "یادداشت" }
           - { label: "📊 داده", value: "داده" }
         default: "خبر"
+      - { name: featured, label: نمایش در هیرو, widget: boolean, default: true }
+      - { name: duration, label: مدت زمان, widget: string, required: false }
+      - { name: episode, label: شماره قسمت, widget: number, required: false, value_type: int }
+      - { name: aparatHash, label: کد ویدیو آپارات, widget: string, required: false }
+      - { name: videoFile, label: آپلود ویدیو (زیر ۲۵MB), widget: file, required: false }
+      - { name: videoUrl, label: لینک ویدیو خارجی, widget: string, required: false }
+      - { name: instagramUrl, label: لینک اینستاگرام, widget: string, required: false }
+      - { name: tags, label: برچسب‌ها, widget: list, required: false, default: [] }
+      - { name: author, label: نویسنده, widget: string, default: "تحریریه مسکن‌تاک" }
+      - { name: body, label: متن, widget: markdown, required: false }
 
+  # 🎬 VIDEOS
+  - name: videos
+    label: 🎬 قسمت‌های مسکن‌تاک
+    label_singular: قسمت
+    folder: src/content/articles
+    create: true
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    summary: "{{title}} — {{publishDate}}"
+    filter:
+      field: category
+      value: ویدیو
+    fields:
+      - { name: title, label: عنوان, widget: string }
+      - { name: description, label: توضیح کوتاه, widget: text, required: false, default: "" }
+      - { name: publishDate, label: تاریخ انتشار, widget: datetime, date_format: "YYYY-MM-DD", time_format: false, format: "YYYY-MM-DD" }
+      - { name: cover, label: تصویر شاخص (۱۹۲۰×۱۰۸۰), widget: image, required: false }
+      - { name: category, label: نوع, widget: hidden, default: "ویدیو" }
+      - { name: episode, label: شماره قسمت, widget: number, required: false, value_type: int }
+      - { name: duration, label: مدت زمان (مثلا 45:20), widget: string, required: false }
+      - { name: aparatHash, label: کد ویدیو آپارات, widget: string, required: false, hint: "مثلا akd5lfq" }
+      - { name: tags, label: برچسب‌ها, widget: list, required: false, default: [] }
+      - { name: author, label: مجری / سازنده, widget: string, default: "تحریریه مسکن‌تاک" }
+      - { name: featured, label: در هیرو نمایش داده شود؟, widget: boolean, default: false }
+      - { name: body, label: متن, widget: markdown, required: false }
+
+  # ⚡ REELS
+  - name: reels
+    label: ⚡ برش‌های کوتاه
+    label_singular: کلیپ کوتاه
+    folder: src/content/articles
+    create: true
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    summary: "{{title}} — {{publishDate}}"
+    filter:
+      field: category
+      value: کوتاه
+    fields:
+      - { name: title, label: عنوان, widget: string }
+      - { name: description, label: توضیح کوتاه, widget: text, required: false, default: "" }
+      - { name: publishDate, label: تاریخ انتشار, widget: datetime, date_format: "YYYY-MM-DD", time_format: false, format: "YYYY-MM-DD" }
+      - { name: cover, label: تامبنیل (۱۰۸۰×۱۹۲۰), widget: image, required: false }
+      - { name: category, label: نوع, widget: hidden, default: "کوتاه" }
       - name: videoFile
-        label: آپلود ویدیو (فقط برای فایل‌های زیر ۲۵ مگابایت)
+        label: آپلود ویدیو (زیر ۲۵ مگابایت)
         widget: file
         required: false
-        hint: "برای ریلزهای کوتاه. فایل مستقیم در سایت میزبانی می‌شود."
-
+        hint: "برای فایل مستقیم MP4"
       - name: videoUrl
         label: لینک ویدیو (R2 یا سرور دیگر)
         widget: string
         required: false
-        hint: "برای فایل‌های بزرگ. مثلا https://pub-xxxxx.r2.dev/my-reel.mp4"
-
-      - name: aparatHash
-        label: کد یا لینک آپارات (اختیاری)
-        widget: string
-        required: false
-        hint: "کد ویدیو مثل akd5lfq — یا لینک کامل"
-
+        hint: "برای فایل‌های بزرگتر از ۲۵ مگابایت"
+      - { name: aparatHash, label: کد یا لینک آپارات, widget: string, required: false }
       - { name: instagramUrl, label: لینک اینستاگرام, widget: string, required: false }
-      - { name: duration, label: مدت زمان (مثلا 0:45 یا 45:20), widget: string, required: false }
-      - { name: episode, label: شماره قسمت, widget: number, required: false, value_type: int }
+      - { name: duration, label: مدت زمان (مثلا 0:45), widget: string, required: false }
+      - { name: tags, label: برچسب‌ها, widget: list, required: false, default: [] }
+      - { name: author, label: سازنده, widget: string, default: "تحریریه مسکن‌تاک" }
+      - { name: featured, label: در هیرو نمایش داده شود؟, widget: boolean, default: false }
+      - { name: body, label: متن, widget: markdown, required: false }
+
+  # 📰 ARTICLES
+  - name: articles
+    label: 📰 اخبار و مقالات
+    label_singular: مطلب
+    folder: src/content/articles
+    create: true
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    summary: "{{category}} · {{title}}"
+    filter:
+      field: category
+      value: خبر
+    fields:
+      - { name: title, label: عنوان, widget: string }
+      - { name: description, label: توضیح کوتاه, widget: text, required: true }
+      - { name: publishDate, label: تاریخ انتشار, widget: datetime, date_format: "YYYY-MM-DD", time_format: false, format: "YYYY-MM-DD" }
+      - { name: cover, label: تصویر اصلی (۱۶۰۰×۹۰۰), widget: image, required: false }
+      - name: category
+        label: نوع
+        widget: select
+        options: ["خبر", "تحلیل", "یادداشت", "داده"]
+        default: "خبر"
       - { name: tags, label: برچسب‌ها, widget: list, required: false, default: [] }
       - { name: author, label: نویسنده, widget: string, default: "تحریریه مسکن‌تاک" }
       - { name: featured, label: در هیرو نمایش داده شود؟, widget: boolean, default: false }
-      - { name: body, label: متن, widget: markdown, required: false }
+      - { name: body, label: متن, widget: markdown, required: true }
