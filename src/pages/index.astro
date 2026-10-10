@@ -245,10 +245,8 @@ const newsList = articles.slice(1, 6);
                   aria-label={r.data.title}
                 >
                   {r.data.cover ? <img src={r.data.cover} alt="" loading="lazy" /> : <div class="ph-placeholder full"></div>}
-                  <span class="reel-play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span>
-                  <span class="reel-info">
-                    <h4>{r.data.title}</h4>
-                    <span>{r.data.duration ? faDigits(r.data.duration) + ' · ' : ''}{toFa(r.data.publishDate.toLocaleDateString('fa-IR'))}</span>
+                  <span class="reel-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24"><path d="M17 10.5V6.5c0-.83-.67-1.5-1.5-1.5h-11C3.67 5 3 5.67 3 6.5v11c0 .83.67 1.5 1.5 1.5h11c.83 0 1.5-.67 1.5-1.5v-4l5 4v-11l-5 4z"/></svg>
                   </span>
                 </button>
               );
@@ -367,7 +365,7 @@ const newsList = articles.slice(1, 6);
         var d = Math.abs(rc - cx);
         if (d < bestDist){ bestDist = d; best = r; }
       });
-      reels.forEach(function(r){ r.classList.toggle('is-center', r === best); });
+      reels.forEach(function(r){ reels.forEach(function(el){ el.classList.toggle('is-center', el === best); }); });
     }
     function schedule(){ if (rafId) return; rafId = requestAnimationFrame(updateCenter); }
     track.addEventListener('scroll', schedule, { passive: true });
