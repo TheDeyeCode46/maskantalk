@@ -2429,7 +2429,6 @@ ul, ol { list-style: none; }
   * { animation: none !important; transition: none !important; }
   .reveal { opacity: 1 !important; transform: none !important; }
 }
-
 /* ============================================================
    MESKAN TALK — GLOBAL STYLES
    ============================================================ */
@@ -2612,7 +2611,7 @@ ul, ol { list-style: none; }
   stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; flex: none;
 }
 
-/* BOTTOM NAV — narrow pill, iOS-safe */
+/* BOTTOM NAV — refined active state */
 .bottom-nav { display: none; }
 
 @media (max-width: 900px) {
@@ -2635,12 +2634,12 @@ ul, ol { list-style: none; }
     display: flex;
     gap: 4px;
     padding: 4px;
-    background: rgba(16,17,23,.95);
+    background: rgba(16,17,23,.96);
     -webkit-backdrop-filter: blur(24px) saturate(1.6);
     backdrop-filter: blur(24px) saturate(1.6);
-    border: 1px solid rgba(255,255,255,.05);
+    border: 1px solid rgba(255,255,255,.06);
     border-radius: 24px;
-    box-shadow: 0 8px 22px rgba(0,0,0,.45);
+    box-shadow: 0 10px 24px rgba(0,0,0,.5);
     pointer-events: auto;
     isolation: isolate;
     -webkit-backface-visibility: hidden;
@@ -2653,11 +2652,11 @@ ul, ol { list-style: none; }
     align-items: center;
     justify-content: center;
     gap: 3px;
-    padding: 6px 4px;
+    padding: 7px 4px 6px;
     border-radius: 18px;
-    color: #8A8DA0;
+    color: #7C7F94;
     background: transparent;
-    transition: color .22s ease;
+    transition: color .22s ease, background .22s ease;
     min-width: 0;
     border: none;
     outline: none;
@@ -2669,43 +2668,35 @@ ul, ol { list-style: none; }
     height: 18px;
     stroke: currentColor;
     fill: none;
-    stroke-width: 1.9;
+    stroke-width: 1.8;
     stroke-linecap: round;
     stroke-linejoin: round;
-    transition: all .22s ease;
-    position: relative;
-    z-index: 1;
+    transition: stroke-width .22s ease, transform .22s ease;
   }
   .bn-item span {
     font-size: .54rem;
-    font-weight: 700;
+    font-weight: 600;
     line-height: 1;
     letter-spacing: .01em;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     max-width: 100%;
-    position: relative;
-    z-index: 1;
+    transition: font-weight .22s ease;
   }
   .bn-item:active { transform: scale(.95); }
 
-  .bn-item.active { color: var(--brand); }
-  .bn-item.active svg {
-    stroke-width: 2.3;
-    filter: drop-shadow(0 0 6px rgba(245,166,35,.55));
+  /* Refined active: soft amber tint, no harsh bars */
+  .bn-item.active {
+    color: var(--brand);
+    background: rgba(245,166,35,.09);
   }
-  .bn-item.active::before {
-    content: "";
-    position: absolute;
-    top: -1px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 22px;
-    height: 3px;
-    border-radius: 2px;
-    background: var(--brand);
-    box-shadow: 0 0 10px rgba(245,166,35,.75);
+  .bn-item.active svg {
+    stroke-width: 2.2;
+    transform: scale(1.05);
+  }
+  .bn-item.active span {
+    font-weight: 800;
   }
 }
 
@@ -2762,15 +2753,18 @@ ul, ol { list-style: none; }
   width: 6px; height: 6px; border-radius: 50%; background: var(--accent);
   animation: floatY 2s ease-in-out infinite;
 }
+
+/* Hero duration hidden on desktop, shown on mobile */
 .hero-duration {
-  position: absolute; bottom: 18px; right: 18px; z-index: 4;
+  position: absolute; bottom: 14px; right: 14px; z-index: 4;
   background: rgba(10,11,16,.85);
   -webkit-backdrop-filter: blur(12px);
   backdrop-filter: blur(12px);
   border: 1px solid var(--line-2);
-  color: #fff; font-size: .76rem; font-weight: 800;
-  padding: .3rem .8rem; border-radius: 10px;
+  color: #fff; font-size: .72rem; font-weight: 800;
+  padding: .28rem .75rem; border-radius: 10px;
   font-variant-numeric: tabular-nums;
+  display: none; /* hidden by default; mobile turns it on */
 }
 
 .hero-play {
@@ -3464,48 +3458,77 @@ ul, ol { list-style: none; }
   object-fit: contain; background: #000; border: 0;
 }
 
-/* VIDEO MODAL */
+/* VIDEO MODAL — fixed 9/16, no scroll */
 .video-modal {
-  position: fixed; inset: 0; z-index: 999;
-  display: flex; align-items: center; justify-content: center;
-  padding: 1rem;
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: max(16px, env(safe-area-inset-top, 16px))
+           max(16px, env(safe-area-inset-right, 16px))
+           max(16px, env(safe-area-inset-bottom, 16px))
+           max(16px, env(safe-area-inset-left, 16px));
+  overflow: hidden;
 }
 .video-modal[hidden] { display: none; }
 .video-modal-backdrop {
-  position: absolute; inset: 0;
-  background: rgba(0,0,0,.85);
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,.88);
   -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
 }
 .video-modal-inner {
-  position: relative; z-index: 2;
-  background: #101117;
+  position: relative;
+  z-index: 2;
+  height: min(88dvh, calc(88vw * 16 / 9));
+  aspect-ratio: 9 / 16;
+  max-width: 100%;
+  background: #000;
   border: 1px solid rgba(255,255,255,.12);
   border-radius: 20px;
-  width: 100%; max-width: 460px;
-  max-height: 92vh; overflow: auto;
-  box-shadow: 0 40px 80px -20px rgba(0,0,0,.8);
+  overflow: hidden;
+  box-shadow: 0 40px 80px -20px rgba(0,0,0,.85);
 }
 .video-modal-close {
-  position: absolute; top: .65rem; left: .65rem;
-  width: 38px; height: 38px; border-radius: 50%;
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
   background: rgba(0,0,0,.65);
-  color: #fff; font-size: 1.4rem; line-height: 1;
-  z-index: 5; cursor: pointer;
-  display: grid; place-items: center;
+  color: #fff;
+  font-size: 1.4rem;
+  line-height: 1;
+  z-index: 5;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
   border: 1px solid rgba(255,255,255,.2);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
 }
 .video-modal-close:hover { background: var(--accent); }
-.video-modal-frame { width: 100%; }
-.video-modal-frame .aparat-wrap { border-radius: 20px 20px 0 0; margin: 0; }
-.video-modal-foot {
-  padding: .9rem 1rem 1.1rem;
-  display: flex; justify-content: space-between; align-items: center;
-  gap: 1rem; flex-wrap: wrap;
+.video-modal-frame {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
 }
-.video-modal-foot h3 { font-size: .95rem; font-weight: 700; color: #fff; margin: 0; flex: 1; min-width: 0; }
-.video-modal-article-link { color: var(--brand); font-size: .82rem; font-weight: 700; white-space: nowrap; }
-.video-modal-article-link:hover { text-decoration: underline; }
+.video-modal-frame video,
+.video-modal-frame iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  object-fit: contain;
+  background: #000;
+}
 
 /* TABLET */
 @media (max-width: 1080px) {
@@ -3545,10 +3568,10 @@ ul, ol { list-style: none; }
   .hero-visual { aspect-ratio: 16/9; min-height: auto; }
   .hero-visual::after { background: linear-gradient(to bottom, transparent 55%, var(--card) 100%); }
   .hero-badge-top { top: 12px; right: 12px; padding: .3rem .75rem; font-size: .66rem; }
+  .hero-duration { display: inline-block; bottom: 12px; right: 12px; font-size: .68rem; }
   .hero-play { width: 62px; height: 62px; }
   .hero-play svg { width: 22px; height: 22px; }
   .hero-play::before, .hero-play::after { inset: -8px; }
-  .hero-duration { bottom: 12px; right: 12px; font-size: .7rem; }
   .hero-content { padding: 1.25rem 1.15rem 1.35rem; }
   .hero-meta { font-size: .72rem; margin-bottom: .55rem; }
   .hero-title { font-size: 1.2rem; line-height: 1.42; margin-bottom: .6rem; }
@@ -3640,7 +3663,17 @@ ul, ol { list-style: none; }
   .am-item svg { width: 13px; height: 13px; }
   .am-episode { font-size: .7rem; padding: 2px 8px; }
 
-  .video-modal-inner { max-width: 340px; }
+  .video-modal-inner {
+    height: min(80dvh, calc(80vw * 16 / 9));
+    border-radius: 16px;
+  }
+  .video-modal-close {
+    top: 8px;
+    left: 8px;
+    width: 34px;
+    height: 34px;
+    font-size: 1.25rem;
+  }
 
   .pagination a, .pagination span { min-width: 34px; height: 34px; padding: 0 .5rem; font-size: .78rem; }
 }
