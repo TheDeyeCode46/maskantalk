@@ -46,9 +46,6 @@ const newsList = articles.slice(1, 6);
             <span class="dot" aria-hidden="true"></span>
             جدیدترین
           </span>
-          {featured?.data.duration && (
-            <span class="hero-duration">{faDigits(featured.data.duration)}</span>
-          )}
           {heroHasVideo && featured ? (
             <button
               type="button"
