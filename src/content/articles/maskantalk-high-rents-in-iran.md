@@ -4,15 +4,15 @@ description: در اولین قسمت «مسکن‌تاک»، از دل بحرا
 publishDate: 2026-07-16
 cover: /uploads/episode 1.webp
 category: ویدیو
-featured: true
-duration: 1:12:38
 episode: 1
+duration: 1:12:38
 aparatHash: akd5lfq
-videoFile: ''
-videoUrl: ''
-instagramUrl: ''
 tags: []
 author: تحریریه مسکن‌تاک
+featured: true
+instagramUrl: ''
+videoFile: ''
+videoUrl: ''
 ---
 
 در اولین قسمت «مسکن‌تاک»، از دل بحران اجاره در ایران شروع می‌کنیم؛ از فاصله میان قانون و واقعیت، تا ایده‌هایی مثل مسکن کپسولی و تجربه کشورهایی که برای کنترل بحران مسکن، راهکارهای متفاوتی را آزموده‌اند. آیا مشکل فقط اجرای قانون است یا بیشتراز اینهاست؟
