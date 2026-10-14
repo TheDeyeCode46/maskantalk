@@ -1,7 +1,7 @@
 {
   "enabled": true,
   "desktopImage": "/uploads/channels4_banner.jpg",
-  "mobileImage": "",
+  "mobileImage": "/uploads/channels4_banner.jpg",
   "alt": "مسکن‌تاک را در شبکه‌های اجتماعی دنبال کنید",
   "link": "",
   "youtubeUrl": "https://www.youtube.com/@Maskan.news24",
