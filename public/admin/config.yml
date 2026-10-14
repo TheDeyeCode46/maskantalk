@@ -10,6 +10,23 @@ public_folder: /uploads
 locale: fa
 
 collections:
+  # ⚙️ SETTINGS — تنظیمات سایت و بنرها
+  - name: settings
+    label: ⚙️ تنظیمات سایت
+    files:
+      - name: banner
+        label: بنر بالای قسمت‌ها
+        file: src/content/settings/banner.json
+        fields:
+          - { name: enabled, label: فعال باشد؟, widget: boolean, default: true }
+          - { name: desktopImage, label: تصویر دسکتاپ (۱۶۰۰×۴۰۰), widget: image, required: false, hint: "سمت راست تصویر را خالی بگذارید تا دکمه‌های یوتیوب، آپارات و بله روی آن بنشیند" }
+          - { name: mobileImage, label: تصویر موبایل (۱۰۰۰×۷۵۰), widget: image, required: false, hint: "بدون دکمه، تمام کادر آزاد است" }
+          - { name: alt, label: متن جایگزین (برای دسترس‌پذیری), widget: string, default: "مسکن‌تاک را در شبکه‌های اجتماعی دنبال کنید" }
+          - { name: link, label: لینک کلیک روی بنر (اختیاری), widget: string, required: false, hint: "اگر خالی بماند، بنر کلیک‌پذیر نیست" }
+          - { name: youtubeUrl, label: لینک یوتیوب, widget: string, required: false }
+          - { name: aparatUrl, label: لینک آپارات, widget: string, required: false }
+          - { name: baleUrl, label: لینک بله, widget: string, required: false }
+
   # ⭐ HERO — items marked as featured
   - name: hero
     label: ⭐ هیرو (نمایش در بالای صفحه اصلی)
