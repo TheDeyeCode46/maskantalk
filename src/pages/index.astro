@@ -4,6 +4,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import { extractAparatHash } from '../lib/aparat';
 import { normCat } from '../lib/categories';
 import { faDigits, toFa } from '../lib/format';
+import PromoBanner from '../components/PromoBanner.astro';
 
 const all = await getCollection('articles');
 const sorted = all.sort((a, b) =>
@@ -85,6 +86,8 @@ const newsList = articles.slice(1, 6);
       </div>
     </div>
   </section>
+
+  <PromoBanner />
 
   <!-- VIDEOS -->
   <section class="section" id="episodes">
