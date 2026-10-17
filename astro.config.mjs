@@ -4,6 +4,6 @@ import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
 
 export default defineConfig({
-  site: 'https://maskantalk.pages.dev',
+  site: 'https://maskantalk.ir',
   integrations: [mdx(), sitemap()],
 });
