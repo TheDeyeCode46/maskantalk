@@ -2,6 +2,7 @@
 import { getCollection, render } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import VideoPlayer from '../../components/VideoPlayer.astro';
+import SeoSchema from '../../components/SeoSchema.astro';
 import { extractAparatHash } from '../../lib/aparat';
 import { normCat } from '../../lib/categories';
 import { formatDuration, toFa } from '../../lib/format';
@@ -19,6 +20,7 @@ const { Content } = await render(article);
 
 const cat = normCat(article.data.category);
 const isReel = cat === 'کوتاه';
+const isVideo = cat === 'ویدیو';
 const aspect = isReel ? '9:16' : '16:9';
 
 const allArticles = await getCollection('articles');
@@ -37,8 +39,25 @@ const related = allArticles
 const aparatHash = article.data.aparatHash ? extractAparatHash(article.data.aparatHash) : null;
 const durationFa = formatDuration(article.data.duration);
 const hasMedia = !!(article.data.videoFile || article.data.videoUrl || aparatHash);
+
+const schemaType = isReel ? 'reel' : (isVideo ? 'video' : 'article');
 ---
-<BaseLayout title={article.data.title} description={article.data.description}>
+<BaseLayout
+  title={article.data.title}
+  description={article.data.description}
+  image={article.data.cover}
+>
+  <SeoSchema
+    type={schemaType}
+    title={article.data.title}
+    description={article.data.description}
+    publishDate={article.data.publishDate}
+    cover={article.data.cover}
+    author={article.data.author}
+    duration={durationFa}
+    articleUrl={`/articles/${article.id}/`}
+  />
+
   <section class="page-light">
     <div class="container">
       <article class="single">
@@ -113,7 +132,7 @@ const hasMedia = !!(article.data.videoFile || article.data.videoUrl || aparatHas
               {related.map(r => (
                 <a href={`/articles/${r.id}/`} class="related-card">
                   {r.data.cover && (
-                    <img src={r.data.cover} alt="" class="related-thumb" loading="lazy" />
+                    <img src={r.data.cover} alt={r.data.title} class="related-thumb" loading="lazy" />
                   )}
                   <div class="related-body">
                     <span class="related-cat">{r.data.category}</span>
