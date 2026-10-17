@@ -1,1 +1,72 @@
+---
+interface Props {
+  type?: 'video' | 'article' | 'reel';
+  title: string;
+  description: string;
+  publishDate: Date;
+  cover?: string;
+  author?: string;
+  duration?: string;
+  articleUrl: string;
+}
+const {
+  type = 'article',
+  title,
+  description,
+  publishDate,
+  cover,
+  author = 'تحریریه مسکن‌تاک',
+  duration,
+  articleUrl,
+} = Astro.props;
 
+const siteUrl = 'https://maskantalk.ir';
+const fullUrl = `${siteUrl}${articleUrl}`;
+const fullCover = cover
+  ? (cover.startsWith('http') ? cover : `${siteUrl}${cover}`)
+  : undefined;
+
+let schema: any = { '@context': 'https://schema.org' };
+
+if (type === 'video' || type === 'reel') {
+  schema = {
+    ...schema,
+    '@type': 'VideoObject',
+    name: title,
+    description,
+    thumbnailUrl: fullCover ? [fullCover] : undefined,
+    uploadDate: publishDate.toISOString(),
+    duration: duration || undefined,
+    contentUrl: fullUrl,
+    embedUrl: fullUrl,
+    publisher: {
+      '@type': 'Organization',
+      name: 'مسکن‌تاک',
+      url: siteUrl,
+    },
+  };
+} else {
+  schema = {
+    ...schema,
+    '@type': 'NewsArticle',
+    headline: title,
+    description,
+    image: fullCover ? [fullCover] : undefined,
+    datePublished: publishDate.toISOString(),
+    author: {
+      '@type': 'Person',
+      name: author,
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: 'مسکن‌تاک',
+      url: siteUrl,
+    },
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': fullUrl,
+    },
+  };
+}
+---
+<script type="application/ld+json" set:html={JSON.stringify(schema)}></script>
