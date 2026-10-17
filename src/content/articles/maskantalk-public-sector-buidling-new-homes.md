@@ -7,11 +7,11 @@ publishDate: 2026-10-10
 cover: /uploads/public sector housing.png
 category: ویدیو
 episode: 7
-duration: 1:04:05
+duration: '1:04:05'
 aparatHash: tej0mgv
 tags: []
 author: تحریریه مسکن‌تاک
-featured: false
+featured: true
 instagramUrl: ''
 ---
 
