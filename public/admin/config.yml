@@ -10,24 +10,22 @@ public_folder: /uploads
 locale: fa
 
 collections:
-  # ⚙️ SETTINGS — تنظیمات سایت و بنرها
   - name: settings
     label: ⚙️ تنظیمات سایت
     files:
       - name: banner
         label: بنر بالای قسمت‌ها
-        file: src/content/settings/banner.json
+        file: src/data/banner.json
         fields:
           - { name: enabled, label: فعال باشد؟, widget: boolean, default: true }
-          - { name: desktopImage, label: تصویر دسکتاپ (۱۶۰۰×۴۰۰), widget: image, required: false, hint: "سمت راست تصویر را خالی بگذارید تا دکمه‌های یوتیوب، آپارات و بله روی آن بنشیند" }
-          - { name: mobileImage, label: تصویر موبایل (۱۰۰۰×۷۵۰), widget: image, required: false, hint: "بدون دکمه، تمام کادر آزاد است" }
-          - { name: alt, label: متن جایگزین (برای دسترس‌پذیری), widget: string, default: "مسکن‌تاک را در شبکه‌های اجتماعی دنبال کنید" }
-          - { name: link, label: لینک کلیک روی بنر (اختیاری), widget: string, required: false, hint: "اگر خالی بماند، بنر کلیک‌پذیر نیست" }
+          - { name: desktopImage, label: تصویر دسکتاپ (۱۶۰۰×۴۰۰), widget: image, required: false, hint: "سمت راست تصویر را خالی بگذارید تا دکمه‌ها روی آن بنشینند" }
+          - { name: mobileImage, label: تصویر موبایل (۱۰۰۰×۷۵۰), widget: image, required: false }
+          - { name: alt, label: متن جایگزین, widget: string, default: "مسکن‌تاک را در شبکه‌های اجتماعی دنبال کنید" }
+          - { name: link, label: لینک کلیک روی بنر (اختیاری), widget: string, required: false }
           - { name: youtubeUrl, label: لینک یوتیوب, widget: string, required: false }
           - { name: aparatUrl, label: لینک آپارات, widget: string, required: false }
           - { name: baleUrl, label: لینک بله, widget: string, required: false }
 
-  # ⭐ HERO — items marked as featured
   - name: hero
     label: ⭐ هیرو (نمایش در بالای صفحه اصلی)
     label_singular: آیتم هیرو
@@ -40,9 +38,9 @@ collections:
       value: true
     fields:
       - { name: title, label: عنوان, widget: string }
-      - { name: description, label: توضیح کوتاه, widget: text, required: false, default: "" }
+      - { name: description, label: توضیح کوتاه, widget: text, required: true, hint: "بین ۱۲۰ تا ۱۶۰ کاراکتر" }
       - { name: publishDate, label: تاریخ انتشار, widget: datetime, date_format: "YYYY-MM-DD", time_format: false, format: "YYYY-MM-DD" }
-      - { name: cover, label: تصویر شاخص, widget: image, required: false, hint: "۱۹۲۰×۱۰۸۰ یا ۱۶۰۰×۹۰۰" }
+      - { name: cover, label: تصویر شاخص, widget: image, required: false }
       - name: category
         label: نوع محتوا
         widget: select
@@ -65,7 +63,6 @@ collections:
       - { name: author, label: نویسنده, widget: string, default: "تحریریه مسکن‌تاک" }
       - { name: body, label: متن, widget: markdown, required: false }
 
-  # 🎬 VIDEOS
   - name: videos
     label: 🎬 قسمت‌های مسکن‌تاک
     label_singular: قسمت
@@ -78,19 +75,18 @@ collections:
       value: ویدیو
     fields:
       - { name: title, label: عنوان, widget: string }
-      - { name: description, label: توضیح کوتاه, widget: text, required: false, default: "" }
+      - { name: description, label: توضیح کوتاه, widget: text, required: true, hint: "بین ۱۲۰ تا ۱۶۰ کاراکتر. این متن در نتایج گوگل دیده می‌شود." }
       - { name: publishDate, label: تاریخ انتشار, widget: datetime, date_format: "YYYY-MM-DD", time_format: false, format: "YYYY-MM-DD" }
       - { name: cover, label: تصویر شاخص (۱۹۲۰×۱۰۸۰), widget: image, required: false }
       - { name: category, label: نوع, widget: hidden, default: "ویدیو" }
       - { name: episode, label: شماره قسمت, widget: number, required: false, value_type: int }
-      - { name: duration, label: مدت زمان (مثلا 45:20), widget: string, required: false }
-      - { name: aparatHash, label: کد ویدیو آپارات, widget: string, required: false, hint: "مثلا akd5lfq" }
+      - { name: duration, label: مدت زمان, widget: string, required: false, hint: "مثلا 45:20" }
+      - { name: aparatHash, label: کد ویدیو آپارات, widget: string, required: false }
       - { name: tags, label: برچسب‌ها, widget: list, required: false, default: [] }
       - { name: author, label: مجری / سازنده, widget: string, default: "تحریریه مسکن‌تاک" }
       - { name: featured, label: در هیرو نمایش داده شود؟, widget: boolean, default: false }
       - { name: body, label: متن, widget: markdown, required: false }
 
-  # ⚡ REELS
   - name: reels
     label: ⚡ برش‌های کوتاه
     label_singular: کلیپ کوتاه
@@ -111,21 +107,18 @@ collections:
         label: آپلود ویدیو (زیر ۲۵ مگابایت)
         widget: file
         required: false
-        hint: "برای فایل مستقیم MP4"
       - name: videoUrl
         label: لینک ویدیو (R2 یا سرور دیگر)
         widget: string
         required: false
-        hint: "برای فایل‌های بزرگتر از ۲۵ مگابایت"
       - { name: aparatHash, label: کد یا لینک آپارات, widget: string, required: false }
       - { name: instagramUrl, label: لینک اینستاگرام, widget: string, required: false }
-      - { name: duration, label: مدت زمان (مثلا 0:45), widget: string, required: false }
+      - { name: duration, label: مدت زمان, widget: string, required: false }
       - { name: tags, label: برچسب‌ها, widget: list, required: false, default: [] }
       - { name: author, label: سازنده, widget: string, default: "تحریریه مسکن‌تاک" }
       - { name: featured, label: در هیرو نمایش داده شود؟, widget: boolean, default: false }
       - { name: body, label: متن, widget: markdown, required: false }
 
-  # 📰 ARTICLES
   - name: articles
     label: 📰 اخبار و مقالات
     label_singular: مطلب
@@ -138,7 +131,11 @@ collections:
       value: خبر
     fields:
       - { name: title, label: عنوان, widget: string }
-      - { name: description, label: توضیح کوتاه, widget: text, required: true }
+      - name: description
+        label: توضیح کوتاه (برای گوگل)
+        widget: text
+        required: true
+        hint: "بین ۱۲۰ تا ۱۶۰ کاراکتر. این متن در نتایج گوگل زیر عنوان دیده می‌شود."
       - { name: publishDate, label: تاریخ انتشار, widget: datetime, date_format: "YYYY-MM-DD", time_format: false, format: "YYYY-MM-DD" }
       - { name: cover, label: تصویر اصلی (۱۶۰۰×۹۰۰), widget: image, required: false }
       - name: category
